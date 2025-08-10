@@ -61,7 +61,7 @@
         }
         
         .fullscreen-button {
-            display: none; /* Oculto por padrão */
+            display: none; 
             padding: 8px 15px;
             border: 2px solid var(--primary-color);
             border-radius: 20px;
@@ -479,7 +479,7 @@
             }
             
             .fullscreen-button {
-                display: inline-block; /* Exibe o botão em telas menores */
+                display: inline-block; 
             }
 
             .cart-toggle {
@@ -798,12 +798,10 @@
         let quantities = {};
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializar quantidades
             products.forEach((product, index) => {
                 quantities[index] = 1;
             });
 
-            // Lógica dos filtros de categoria
             document.querySelectorAll('.category-filter').forEach(button => {
                 button.addEventListener('click', function() {
                     document.querySelectorAll('.category-filter').forEach(btn => btn.classList.remove('active'));
@@ -818,7 +816,6 @@
                 });
             });
             
-            // Lógica da pesquisa
             document.getElementById('searchInput').addEventListener('input', function(e) {
                 const searchTerm = e.target.value.toLowerCase();
                 const filtered = products.filter(product => 
@@ -828,7 +825,6 @@
                 renderProducts(filtered);
             });
             
-            // Lógica do botão de Tela Cheia
             const fullscreenBtn = document.getElementById('fullscreenBtn');
             if(fullscreenBtn) {
                 fullscreenBtn.addEventListener('click', () => {
@@ -842,10 +838,8 @@
                 });
             }
 
-            // Renderizar produtos iniciais
             renderProducts();
         });
-
 
         function renderProducts(productsToRender = products) {
             const grid = document.getElementById('productsGrid');
@@ -976,7 +970,7 @@
             message += '📍 *Endereço de entrega:*\n(Por favor, informe seu endereço)\n\n';
             message += '✅ Confirme seu pedido e aguarde o contato para finalizar!';
             const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://api.whatsapp.com/send?phone=5548992999710&text=${encodedMessage}`;
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
         }
     </script>
