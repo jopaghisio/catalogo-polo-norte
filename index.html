@@ -310,11 +310,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 20px 0;
             border-bottom: 2px solid #f0f0f0;
-            margin-bottom: 15px;
-            border-radius: 15px;
-            background: var(--bg-light);
         }
 
         .cart-item-info {
@@ -363,19 +360,75 @@
         }
 
         .cart-total {
-            padding: 30px;
+            padding: 20px 30px 30px 30px;
             background: linear-gradient(135deg, var(--bg-light), #e9ecef);
             border-top: 3px solid var(--primary-color);
         }
-
-        .total-amount {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--primary-color);
+        
+        #delivery-details {
             margin-bottom: 20px;
+        }
+        
+        #delivery-details h3 {
             text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 15px;
         }
 
+        .address-form-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .address-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-light);
+            width: 100%;
+        }
+
+        .address-form-group input, 
+        .address-form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+
+        .address-form-group .cep-field { flex: 1; }
+        .address-form-group .num-field { flex: 0 0 80px; }
+
+        .totals-summary {
+            font-size: 1.1em;
+        }
+
+        .totals-summary div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .totals-summary .final-total {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 15px;
+            border-top: 2px solid #ddd;
+            padding-top: 15px;
+        }
+
+        #delivery-fee-message {
+            font-size: 0.9em;
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
         .checkout-btn {
             width: 100%;
             padding: 18px;
@@ -391,9 +444,15 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            margin-top: 20px;
         }
 
-        .checkout-btn:hover {
+        .checkout-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .checkout-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
         }
@@ -527,14 +586,48 @@
             <button class="close-cart" onclick="toggleCart()">✕</button>
         </div>
         <div id="cartItems" class="cart-items">
-            <div class="empty-cart">
-                <h3>Carrinho Vazio</h3>
-                <p>Adicione alguns produtos incríveis!</p>
             </div>
-        </div>
+
         <div class="cart-total" id="cartTotal" style="display: none;">
-            <div class="total-amount" id="totalAmount">Total: R$ 0,00</div>
-            <button class="checkout-btn" onclick="checkout()">
+            <div id="delivery-details" style="display: none;">
+                <h3>📍 Endereço de Entrega</h3>
+                <div class="address-form-group">
+                    <label for="bairro">Bairro</label>
+                    <select id="bairro" onchange="calculateDelivery()">
+                        <option value="">Selecione o bairro...</option>
+                        <option value="sambaqui">Sambaqui</option>
+                        <option value="barra-do-sambaqui">Barra do Sambaqui</option>
+                        <option value="santo-antonio">Santo Antônio de Lisboa</option>
+                        <option value="outro">Outro Bairro</option>
+                    </select>
+                </div>
+                <div class="address-form-group">
+                    <label for="rua">Rua</label>
+                    <input type="text" id="rua" placeholder="Nome da sua rua">
+                </div>
+                <div class="address-form-group">
+                    <input type="text" id="cep" class="cep-field" placeholder="CEP">
+                    <input type="text" id="numero" class="num-field" placeholder="Nº">
+                </div>
+            </div>
+
+            <div class="totals-summary">
+                <div id="subtotal-line">
+                    <span>Subtotal</span>
+                    <span id="subtotalAmount">R$ 0,00</span>
+                </div>
+                <div id="delivery-fee-line">
+                    <span>Taxa de Entrega</span>
+                    <span id="deliveryFeeAmount">R$ 0,00</span>
+                </div>
+                <div class="final-total">
+                    <span>Total</span>
+                    <span id="totalAmount">R$ 0,00</span>
+                </div>
+                 <div id="delivery-fee-message"></div>
+            </div>
+
+            <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
                 <span>📱</span> Finalizar pelo WhatsApp
             </button>
         </div>
@@ -796,6 +889,7 @@
         ];
         let cart = [];
         let quantities = {};
+        let deliveryFee = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             products.forEach((product, index) => {
@@ -839,6 +933,7 @@
             }
 
             renderProducts();
+            updateCartUI(); // Initial UI update
         });
 
         function renderProducts(productsToRender = products) {
@@ -905,22 +1000,55 @@
             }, 1500);
         }
 
+        function calculateDelivery() {
+            const neighborhood = document.getElementById('bairro').value;
+            const feeMessageEl = document.getElementById('delivery-fee-message');
+            
+            switch(neighborhood) {
+                case 'sambaqui':
+                case 'barra-do-sambaqui':
+                    deliveryFee = 5;
+                    feeMessageEl.textContent = '';
+                    break;
+                case 'santo-antonio':
+                    deliveryFee = 10;
+                    feeMessageEl.textContent = '';
+                    break;
+                case 'outro':
+                    deliveryFee = 0; // Taxa será a combinar
+                    feeMessageEl.textContent = 'Taxa de R$ 5/km a combinar com o vendedor.';
+                    break;
+                default:
+                    deliveryFee = 0;
+                    feeMessageEl.textContent = '';
+            }
+            updateCartUI();
+        }
+
         function updateCartUI() {
-            const cartItems = document.getElementById('cartItems');
+            const cartItemsEl = document.getElementById('cartItems');
             const cartCount = document.getElementById('cartCount');
-            const cartTotal = document.getElementById('cartTotal');
-            const totalAmount = document.getElementById('totalAmount');
+            const cartTotalEl = document.getElementById('cartTotal');
+            const deliveryDetailsEl = document.getElementById('delivery-details');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            const subtotalAmountEl = document.getElementById('subtotalAmount');
+            const deliveryFeeAmountEl = document.getElementById('deliveryFeeAmount');
+            const totalAmountEl = document.getElementById('totalAmount');
+
 
             if (cart.length === 0) {
-                cartItems.innerHTML = '<div class="empty-cart"><h3>Carrinho Vazio</h3><p>Adicione alguns produtos incríveis!</p></div>';
+                cartItemsEl.innerHTML = '<div class="empty-cart"><h3>Carrinho Vazio</h3><p>Adicione alguns produtos incríveis!</p></div>';
                 cartCount.style.display = 'none';
-                cartTotal.style.display = 'none';
+                cartTotalEl.style.display = 'none';
+                deliveryDetailsEl.style.display = 'none';
             } else {
-                let total = 0;
+                let subtotal = 0;
                 let itemCount = 0;
-                cartItems.innerHTML = cart.map((item, cartIndex) => {
+                
+                let cartItemsHTML = cart.map((item, cartIndex) => {
                     const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
-                    total += itemTotal;
+                    subtotal += itemTotal;
                     itemCount += item.quantity;
                     return `
                         <div class="cart-item">
@@ -936,15 +1064,32 @@
                     `;
                 }).join('');
                 
+                cartItemsEl.innerHTML = cartItemsHTML;
+                
                 cartCount.textContent = itemCount;
                 cartCount.style.display = 'flex';
-                totalAmount.textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
-                cartTotal.style.display = 'block';
+                cartTotalEl.style.display = 'block';
+                deliveryDetailsEl.style.display = 'block';
+
+                const total = subtotal + deliveryFee;
+
+                subtotalAmountEl.textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+                
+                if (document.getElementById('bairro').value === 'outro') {
+                    deliveryFeeAmountEl.textContent = 'A combinar';
+                } else {
+                    deliveryFeeAmountEl.textContent = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
+                }
+
+                totalAmountEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+                
+                checkoutBtn.disabled = !document.getElementById('bairro').value;
             }
         }
 
         function removeFromCart(cartIndex) {
             cart.splice(cartIndex, 1);
+            calculateDelivery(); // Recalculate delivery in case it was the last item
             updateCartUI();
         }
 
@@ -953,22 +1098,58 @@
         }
 
         function checkout() {
+            const bairro = document.getElementById('bairro').value;
+            const rua = document.getElementById('rua').value;
+            const numero = document.getElementById('numero').value;
+            const cep = document.getElementById('cep').value;
+
+            if (!bairro || !rua || !numero) {
+                alert('Por favor, preencha o bairro, a rua e o número para a entrega.');
+                return;
+            }
+
             if (cart.length === 0) {
                 alert('Seu carrinho está vazio!');
                 return;
             }
-            let message = '🛒 *PEDIDO POLO NORTE*\n\n';
-            let total = 0;
+
+            let message = '🛒 *NOVO PEDIDO - POLO NORTE*\n\n';
+            let subtotal = 0;
+            
+            message += '🛍️ *PRODUTOS:*\n';
             cart.forEach(item => {
                 const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
-                total += itemTotal;
-                message += `📦 *${item.product.produto}*\n`;
-                message += `   ${item.product.volume} • Qtd: ${item.quantity}\n`;
-                message += `   R$ ${itemTotal.toFixed(2).replace('.', ',')}\n\n`;
+                subtotal += itemTotal;
+                message += ` - ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\n`;
             });
-            message += `💰 *TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n\n`;
-            message += '📍 *Endereço de entrega:*\n(Por favor, informe seu endereço)\n\n';
-            message += '✅ Confirme seu pedido e aguarde o contato para finalizar!';
+
+            message += '\n----------------------------------\n';
+            
+            message += '📍 *ENDEREÇO DE ENTREGA:*\n';
+            message += `Rua: ${rua}, Nº: ${numero}\n`;
+            message += `Bairro: ${bairro.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}\n`;
+            if (cep) message += `CEP: ${cep}\n`;
+
+            message += '\n----------------------------------\n';
+
+            message += '💰 *RESUMO FINANCEIRO:*\n';
+            message += `Subtotal dos Produtos: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            
+            let deliveryFeeText = '';
+            if (bairro === 'outro') {
+                deliveryFeeText = 'A combinar (R$ 5/km)';
+            } else {
+                deliveryFeeText = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
+            }
+            message += `Taxa de Entrega: ${deliveryFeeText}\n`;
+            
+            const total = subtotal + deliveryFee;
+            message += `*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
+
+            if (bairro === 'outro') {
+                message += `_(Total sem a taxa de entrega, que será combinada)_`;
+            }
+
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
