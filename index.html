@@ -253,7 +253,7 @@
                 <button class="category-filter" data-category="Whisky">Whiskys</button>
                 <button class="category-filter" data-category="Vodka">Vodkas</button>
                 <button class="category-filter" data-category="Gin">Gins</button>
-                <button class="category-filter" data-category="Cachaça">Cachaças</button>
+                 <button class="category-filter" data-category="Cachaça">Cachaças</button>
             </div>
         </div>
 
@@ -275,7 +275,7 @@
             <div id="cartItems" class="cart-items"></div>
             <div class="cart-footer">
                 <div class="totals-summary">
-                    <div id="subtotal-line">
+                    <div class="final-total">
                         <span>Subtotal</span>
                         <span id="subtotalAmountStep1">R$ 0,00</span>
                     </div>
@@ -742,65 +742,74 @@
         function updateCartUI() {
             const cartItemsEl = document.getElementById('cartItems');
             const cartCount = document.getElementById('cartCount');
-            const cartTotalEl = document.getElementById('cartTotal');
-            const checkoutBtn = document.getElementById('checkoutBtn');
+            const cartSidebar = document.getElementById('cartSidebar');
             const goToDeliveryBtn = document.getElementById('goToDeliveryBtn');
+            const checkoutBtn = document.getElementById('checkoutBtn');
 
+            // Se o carrinho estiver vazio, esconde tudo e reseta
             if (cart.length === 0) {
                 cartItemsEl.innerHTML = '<div class="empty-cart"><h3>Carrinho Vazio</h3><p>Adicione alguns produtos incríveis!</p></div>';
                 cartCount.style.display = 'none';
-                cartTotalEl.style.display = 'none';
-                navigateToCartStep(1); // Reset to step 1
-            } else {
-                let subtotal = 0;
-                let itemCount = 0;
-                
-                let cartItemsHTML = cart.map((item, cartIndex) => {
-                    const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
-                    subtotal += itemTotal;
-                    itemCount += item.quantity;
-                    return `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                <div class="cart-item-name">${item.product.produto}</div>
-                                <div class="cart-item-details">${item.product.volume} • Qtd: ${item.quantity}</div>
-                                <div class="cart-item-price">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
-                            </div>
-                            <div class="cart-item-controls">
-                                <button class="remove-item" onclick="removeFromCart(${cartIndex})">🗑️ Remover</button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                
-                cartItemsEl.innerHTML = cartItemsHTML;
-                cartCount.textContent = itemCount;
-                cartCount.style.display = 'flex';
-                cartTotalEl.style.display = 'block';
-
-                const total = subtotal + deliveryFee;
-
-                document.getElementById('subtotalAmountStep1').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-                document.getElementById('subtotalAmountStep2').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-                
-                if (document.getElementById('bairro').value === 'outro') {
-                    document.getElementById('deliveryFeeAmount').textContent = 'A combinar';
-                } else {
-                    document.getElementById('deliveryFeeAmount').textContent = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
-                }
-
-                document.getElementById('totalAmount').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-                
-                checkoutBtn.disabled = !document.getElementById('bairro').value;
-                goToDeliveryBtn.disabled = false;
+                goToDeliveryBtn.style.display = 'none'; // Esconde o botão de continuar
+                document.getElementById('subtotalAmountStep1').parentElement.style.display = 'none'; // Esconde a linha de subtotal
+                return;
             }
+
+            // Se tem itens, mostra os elementos da Etapa 1
+            goToDeliveryBtn.style.display = 'flex';
+            document.getElementById('subtotalAmountStep1').parentElement.style.display = 'flex';
+            
+            let subtotal = 0;
+            let itemCount = 0;
+            
+            // **AQUI**: Gera o HTML para cada item do carrinho
+            let cartItemsHTML = cart.map((item, cartIndex) => {
+                // **AQUI**: Calcula o total para este item (preço * quantidade)
+                const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
+                subtotal += itemTotal;
+                itemCount += item.quantity;
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.product.produto}</div>
+                            <div class="cart-item-details">${item.product.volume} • Qtd: ${item.quantity}</div>
+                            <div class="cart-item-price">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="remove-item" onclick="removeFromCart(${cartIndex})">🗑️ Remover</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            cartItemsEl.innerHTML = cartItemsHTML;
+            cartCount.textContent = itemCount;
+            cartCount.style.display = 'flex';
+
+            const total = subtotal + deliveryFee;
+
+            // **AQUI**: Atualiza os valores em AMBAS as etapas
+            document.getElementById('subtotalAmountStep1').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('subtotalAmountStep2').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            
+            if (document.getElementById('bairro').value === 'outro') {
+                document.getElementById('deliveryFeeAmount').textContent = 'A combinar';
+            } else {
+                document.getElementById('deliveryFeeAmount').textContent = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
+            }
+
+            // **AQUI**: Atualiza o TOTAL FINAL na etapa de endereço
+            document.getElementById('totalAmount').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            
+            checkoutBtn.disabled = !document.getElementById('bairro').value;
         }
 
         function removeFromCart(cartIndex) {
             cart.splice(cartIndex, 1);
             if (cart.length === 0) {
-                deliveryFee = 0; // Reset fee if cart is empty
-                document.getElementById('bairro').value = ''; // Reset neighborhood selection
+                deliveryFee = 0; 
+                document.getElementById('bairro').value = ''; 
+                navigateToCartStep(1); // Volta para a sacola se esvaziar
             }
             calculateDelivery();
             updateCartUI();
@@ -808,7 +817,7 @@
 
         function toggleCart() {
             document.getElementById('cartSidebar').classList.toggle('open');
-            navigateToCartStep(1); // Always open on the first step
+            navigateToCartStep(1); 
         }
 
         function checkout() {
