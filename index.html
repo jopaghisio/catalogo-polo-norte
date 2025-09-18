@@ -3,869 +3,1072 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Produtos Polo Norte</title>
+    <title>Polo Norte Bebidas - Catálogo Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* CSS Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
-            --primary-color: #2a5d84;
-            --secondary-color: #1e3a5f;
-            --text-dark: #2c3e50;
-            --text-light: #666;
-            --accent-green: #27ae60;
-            --accent-red: #e74c3c;
-            --bg-light: #f8f9fa;
+            --polo-black: #1a1a1a;
+            --polo-white: #ffffff;
+            --polo-cyan: #26c6da;
+            --polo-cyan-light: #4dd0e1;
+            --polo-cyan-dark: #0097a7;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            min-height: 100vh;
-            color: #333;
+        .polo-gradient-bg {
+            background: linear-gradient(135deg, var(--polo-cyan), var(--polo-cyan-light));
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        .polo-shadow {
+            box-shadow: 0 10px 40px rgba(38, 198, 218, 0.15);
         }
 
-        /* Mobile First Styles */
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        .polo-glow {
+            box-shadow: 0 0 20px rgba(38, 198, 218, 0.3);
         }
 
-        .header h1 {
-            font-size: 2.2em;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
+        .animate-spin {
+            animation: spin 1s linear infinite;
         }
 
-        .header p {
-            font-size: 1em;
-            margin-bottom: 15px;
-        }
-        
-        .fullscreen-button {
-            display: inline-block; 
-            padding: 8px 15px;
-            border: 2px solid var(--primary-color);
-            border-radius: 20px;
-            background: transparent;
-            color: var(--primary-color);
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            margin-top: 10px;
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        .search-filter {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: stretch;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 16px;
-        }
-        
-        .category-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
         }
 
-        .category-filter {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 20px;
-            background: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            flex-grow: 1;
-        }
-
-        .category-filter:hover,
-        .category-filter.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .product-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
+        .transition-all {
             transition: all 0.3s ease;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        .hover\:scale-105:hover {
+            transform: scale(1.05);
         }
 
-        .product-category {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 6px 14px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            display: inline-block;
+        .hover\:scale-110:hover {
+            transform: scale(1.1);
         }
 
-        .product-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--text-dark); }
-        .product-volume { color: var(--text-light); font-size: 14px; margin-bottom: 15px; }
-        .product-price { font-size: 24px; font-weight: bold; color: var(--accent-green); margin-bottom: 15px; }
-        .quantity-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; justify-content: center; }
-        .quantity-btn { width: 40px; height: 40px; border: 2px solid var(--primary-color); background: white; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary-color); transition: all 0.3s ease; font-size: 18px; }
-        .quantity-btn:hover { background: var(--primary-color); color: white; transform: scale(1.1); }
-        .quantity-display { font-weight: bold; font-size: 18px; min-width: 40px; text-align: center; background: var(--bg-light); padding: 8px 12px; border-radius: 10px; }
-        .add-to-cart { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
-        
-        .cart-sidebar {
+        .hover\:-translate-y-2:hover {
+            transform: translateY(-0.5rem);
+        }
+
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Toast styles */
+        .toast {
             position: fixed;
-            right: -100%; top: 0; width: 100%; height: 100vh;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.2);
-            transition: right 0.3s ease-in-out;
-            z-index: 1000;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #26c6da;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0097a7;
+        }
+
+        /* Sidebar overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            background: white;
+            z-index: 999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
         }
 
-        .cart-sidebar.open { right: 0; }
-        .cart-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; }
-        .cart-header h2 { font-size: 20px; }
-        .close-cart { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
-        
-        .cart-step { display: flex; flex-direction: column; height: 100%; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
-        .cart-item-name { font-weight: bold; font-size: 16px; }
-        .cart-item-details { color: var(--text-light); font-size: 14px; }
-        .cart-item-price { color: var(--accent-green); font-weight: bold; font-size: 16px; }
-        .remove-item { background: var(--accent-red); color: white; border: none; border-radius: 15px; padding: 8px 12px; cursor: pointer; font-size: 12px; }
-        
-        .cart-footer { padding: 20px; background: var(--bg-light); border-top: 3px solid var(--primary-color); }
-        
-        #delivery-details { padding: 20px; flex: 1; overflow-y: auto; }
-        #delivery-details h3 { text-align: center; color: var(--text-dark); margin-bottom: 15px; }
-        .address-form-group { margin-bottom: 10px; }
-        .address-form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: var(--text-light); }
-        .address-form-group input, .address-form-group select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em; }
-        .cep-num-group { display: flex; gap: 10px; }
-        .cep-num-group .num-field { flex: 0 0 80px; }
-        
-        .totals-summary { font-size: 1.1em; }
-        .totals-summary div { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .totals-summary .final-total { font-size: 1.5em; font-weight: bold; color: var(--primary-color); margin-top: 15px; border-top: 2px solid #ddd; padding-top: 15px; }
-        #delivery-fee-message { font-size: 0.9em; text-align: center; color: var(--text-light); margin-top: 5px; }
-        
-        .cart-footer .btn { width: 100%; padding: 18px; color: white; border: none; border-radius: 25px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
-        .btn-secondary { background: var(--text-light); }
-        .btn-checkout { background: linear-gradient(135deg, #25d366, #20b358); }
-        .btn:disabled { background: #999; cursor: not-allowed; }
-        .cart-nav-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .sidebar.show {
+            transform: translateX(0);
+        }
 
-        .cart-toggle { position: fixed; bottom: 20px; right: 20px; width: 70px; height: 70px; background: linear-gradient(135deg, var(--accent-red), #c0392b); color: white; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); }
-        .cart-count { position: absolute; top: -5px; right: -5px; background: #f39c12; color: white; border-radius: 50%; width: 28px; height: 28px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .empty-cart { text-align: center; padding: 80px 20px; color: var(--text-light); }
-        
-        /* Desktop Styles */
-        @media (min-width: 769px) {
-            .header h1 { font-size: 2.8em; }
-            .header p { font-size: 1.1em; }
-            .fullscreen-button { display: none; }
-            .search-filter { flex-direction: row; }
-            .search-input { min-width: 250px; }
-            .category-buttons { flex-wrap: nowrap; }
-            .products-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-            .cart-sidebar { width: 450px; right: -450px; }
-            .cart-toggle { width: 80px; height: 80px; font-size: 28px; bottom: 30px; right: 30px; }
-            .cart-count { width: 30px; height: 30px; top: -8px; right: -8px; }
+        @media (max-width: 640px) {
+            .sidebar {
+                max-width: 100%;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🏪 Catálogo Polo Norte</h1>
-            <p>Seus produtos favoritos com entrega rápida!</p>
-            <p>Escolha, adicione ao carrinho e finalize pelo WhatsApp</p>
-            <button id="fullscreenBtn" class="fullscreen-button">📲 Tela Cheia</button>
-        </div>
-
-        <div class="search-filter">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Pesquisar produtos...">
-            <div class="category-buttons">
-                <button class="category-filter active" data-category="all">Todos</button>
-                <button class="category-filter" data-category="Cerveja">Cervejas</button>
-                <button class="category-filter" data-category="Whisky">Whiskys</button>
-                <button class="category-filter" data-category="Vodka">Vodkas</button>
-                <button class="category-filter" data-category="Gin">Gins</button>
-                 <button class="category-filter" data-category="Cachaça">Cachaças</button>
-            </div>
-        </div>
-
-        <div id="productsGrid" class="products-grid"></div>
-    </div>
-
-    <button class="cart-toggle" onclick="toggleCart()">
-        🛒
-        <span id="cartCount" class="cart-count" style="display: none;">0</span>
-    </button>
-
-    <div id="cartSidebar" class="cart-sidebar">
-        <div class="cart-header">
-            <h2 id="cart-title">🛒 Meu Carrinho</h2>
-            <button class="close-cart" onclick="toggleCart()">✕</button>
-        </div>
-
-        <div id="cart-step-1" class="cart-step">
-            <div id="cartItems" class="cart-items"></div>
-            <div class="cart-footer">
-                <div class="totals-summary">
-                    <div class="final-total">
-                        <span>Subtotal</span>
-                        <span id="subtotalAmountStep1">R$ 0,00</span>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <!-- Header -->
+    <header class="bg-gradient-to-b from-black via-gray-900 to-black text-white shadow-2xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent"></div>
+        
+        <div class="container mx-auto px-4 py-12 relative">
+            <div class="text-center space-y-6">
+                <!-- Logo Placeholder -->
+                <div class="flex items-center justify-center">
+                    <div class="relative">
+                        <div class="h-32 md:h-40 w-40 md:w-48 bg-white rounded-xl flex items-center justify-center text-black font-bold text-2xl shadow-2xl">
+                            🐻‍❄️ POLO NORTE
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-transparent to-cyan-400/20 blur-xl"></div>
                     </div>
                 </div>
-                <button class="btn btn-primary" id="goToDeliveryBtn" onclick="navigateToCartStep(2)">Continuar para Entrega</button>
+                
+                <div class="space-y-2">
+                    <p class="text-xl md:text-2xl text-cyan-300 font-medium tracking-wide">
+                        Seus produtos favoritos com entrega rápida!
+                    </p>
+                    <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                        Escolha, adicione ao carrinho e finalize pelo WhatsApp
+                    </p>
+                </div>
+                
+                <button onclick="toggleFullscreen()" class="md:hidden bg-white/10 border border-white/20 text-white hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg transition-all">
+                    <i class="fas fa-expand mr-2"></i>
+                    Tela Cheia
+                </button>
             </div>
         </div>
         
-        <div id="cart-step-2" class="cart-step" style="display: none;">
-            <div id="delivery-details">
-                <h3>📍 Endereço de Entrega</h3>
-                <div class="address-form-group">
-                    <label for="bairro">Bairro</label>
-                    <select id="bairro" onchange="calculateDelivery()">
-                        <option value="">Selecione o bairro...</option>
-                        <option value="sambaqui">Sambaqui</option>
-                        <option value="barra-do-sambaqui">Barra do Sambaqui</option>
-                        <option value="santo-antonio">Santo Antônio de Lisboa</option>
-                        <option value="outro">Outro Bairro</option>
-                    </select>
+        <div class="h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+    </header>
+
+    <!-- Search and Filters -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-gray-200 backdrop-blur-sm">
+            <div class="space-y-6">
+                <!-- Search -->
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput"
+                        placeholder="🔍 Pesquisar produtos..."
+                        class="pl-12 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-cyan-400 focus:ring-cyan-400/20 bg-gray-50 focus:bg-white transition-all w-full outline-none"
+                        oninput="filterProducts()"
+                    />
                 </div>
-                <div class="address-form-group">
-                    <label for="rua">Rua</label>
-                    <input type="text" id="rua" placeholder="Nome da sua rua">
-                </div>
-                <div class="address-form-group cep-num-group">
-                    <input type="text" id="cep" class="cep-field" placeholder="CEP">
-                    <input type="text" id="numero" class="num-field" placeholder="Nº">
-                </div>
-            </div>
-            <div class="cart-footer">
-                <div class="totals-summary">
-                    <div>
-                        <span>Subtotal</span>
-                        <span id="subtotalAmountStep2">R$ 0,00</span>
-                    </div>
-                    <div>
-                        <span>Taxa de Entrega</span>
-                        <span id="deliveryFeeAmount">R$ 0,00</span>
-                    </div>
-                    <div class="final-total">
-                        <span>Total</span>
-                        <span id="totalAmount">R$ 0,00</span>
-                    </div>
-                    <div id="delivery-fee-message"></div>
-                </div>
-                <div class="cart-nav-buttons">
-                    <button class="btn btn-secondary" onclick="navigateToCartStep(1)">Voltar</button>
-                    <button class="btn btn-checkout" id="checkoutBtn" onclick="checkout()">Finalizar Pedido</button>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap gap-3" id="categoryFilters">
+                    <!-- Categories will be populated by JavaScript -->
                 </div>
             </div>
         </div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8" id="productsGrid">
+            <!-- Products will be populated by JavaScript -->
+        </div>
     </div>
 
+    <!-- Floating Cart Button -->
+    <button 
+        id="cartButton"
+        onclick="openCart()"
+        class="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-black hover:bg-gray-800 shadow-2xl border-4 border-white z-50 transition-all hover:scale-110 group"
+    >
+        <i class="fas fa-shopping-cart text-white group-hover:text-cyan-300 transition-colors"></i>
+        <span id="cartBadge" class="absolute -top-2 -right-2 bg-cyan-400 text-black font-bold border-2 border-white rounded-full w-6 h-6 flex items-center justify-center text-sm hidden">0</span>
+    </button>
+
+    <!-- Cart Sidebar -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeCart()"></div>
+    <div id="cartSidebar" class="sidebar bg-gradient-to-b from-white to-gray-50/50">
+        <!-- Sidebar content will be populated by JavaScript -->
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
     <script>
+        // Products data
         const products = [
-             {"tipo": "Cachaça", "produto": "51 Seleção", "volume": "1L", "preco": "35,99"},
-            {"tipo": "Vodka", "produto": "Absolut", "volume": "750ml", "preco": "104,99"},
-            {"tipo": "Bebida", "produto": "Agua C/Gas", "volume": "500ml", "preco": "2,49"},
-            {"tipo": "Bebida", "produto": "Agua De Coco Campo Largo", "volume": "1lt", "preco": "16,99"},
-            {"tipo": "Bebida", "produto": "Agua Mineral", "volume": "500ml", "preco": "2,50"},
-            {"tipo": "Acessório", "produto": "Concha + Tesoura", "volume": "un.", "preco": "30,00"},
-            {"tipo": "Acessório", "produto": "Aluminio avulso", "volume": "un.", "preco": "0,60"},
-            {"tipo": "Acessório", "produto": "Aluminio Predator", "volume": "un.", "preco": "0,60"},
-            {"tipo": "Acessório", "produto": "Aluminio Predator pacote", "volume": "50un", "preco": "20,00"},
-            {"tipo": "Snack", "produto": "Amendoin", "volume": "un.", "preco": "4,99"},
-            {"tipo": "Snack", "produto": "Amendoin torrado", "volume": "400g", "preco": "9,90"},
-            {"tipo": "Rum", "produto": "Bacardi Big Apple", "volume": "750ml", "preco": "62,99"},
-            {"tipo": "Doce", "produto": "Bala Halls", "volume": "un.", "preco": "1,99"},
-            {"tipo": "Licor", "produto": "Balena Creme de Tequila", "volume": "750ml", "preco": "209,99"},
-            {"tipo": "Whisky", "produto": "Ballantine's", "volume": "1 litro", "preco": "129,99"},
-            {"tipo": "Energético", "produto": "Baly", "volume": "2lt", "preco": "14,50"},
-            {"tipo": "Energético", "produto": "Baly Sabores", "volume": "473ml", "preco": "7,99"},
-            {"tipo": "Energético", "produto": "Baly Tropical", "volume": "2lt", "preco": "14,50"},
-            {"tipo": "Salgadinho", "produto": "Batata Slice 90g", "volume": "un.", "preco": "9,50"},
-            {"tipo": "Gin", "produto": "Beefeater", "volume": "750ml", "preco": "169,99"},
-            {"tipo": "Acessório", "produto": "Bic Acendedor", "volume": "un.", "preco": "13,99"},
-            {"tipo": "Bebida", "produto": "Agua Mineral", "volume": "1,5lt", "preco": "4,50"},
-            {"tipo": "Acessório", "produto": "Bic Grande", "volume": "un.", "preco": "7,99"},
-            {"tipo": "Acessório", "produto": "Bic Pequeno", "volume": "un.", "preco": "5,99"},
-            {"tipo": "Gin", "produto": "Bombay Sapphire", "volume": "750ml", "preco": "175,99"},
-            {"tipo": "Doce", "produto": "Bombom Ouro Branco", "volume": "un.", "preco": "1,99"},
-            {"tipo": "Doce", "produto": "Bubalo Sortidos", "volume": "un.", "preco": "0,75"},
-            {"tipo": "Whisky", "produto": "Buchanan's Deluxe", "volume": "—", "preco": "279,99"},
-            {"tipo": "Gin", "produto": "Bulldog", "volume": "750ml", "preco": "259,99"},
-            {"tipo": "Cachaça", "produto": "Cachaça 51", "volume": "1L", "preco": "17,99"},
-            {"tipo": "Cachaça", "produto": "Cachaça Popular", "volume": "1L", "preco": "14,99"},
-            {"tipo": "Cachaça", "produto": "Camelinho", "volume": "500ml", "preco": "7,20"},
-            {"tipo": "Licor", "produto": "Campari", "volume": "1 lt", "preco": "74,99"},
-            {"tipo": "Vinho", "produto": "Campo Largo Branco seco", "volume": "750ml", "preco": "21,99"},
-            {"tipo": "Carvao", "produto": "Carvao 3kg", "volume": "un.", "preco": "17,00"},
-            {"tipo": "Carvao", "produto": "Carvao 5kg", "volume": "un.", "preco": "26,00"},
-            {"tipo": "Tabaco", "produto": "Carvao Narguile", "volume": "un.", "preco": "1,50"},
-            {"tipo": "Tabaco", "produto": "Carvao narguile avulso", "volume": "un.", "preco": "1,50"},
-            {"tipo": "Tabaco", "produto": "Carvao Narguile D´Coco", "volume": "un.", "preco": "1,50"},
-            {"tipo": "Tabaco", "produto": "Carvao Narguile D´Coco Caixa", "volume": "1kg", "preco": "48,00"},
-            {"tipo": "Combo", "produto": "Cavalinho + Baly 2lts + Gelo 3kg", "volume": "kit", "preco": "115,00"},
-            {"tipo": "Cerveja", "produto": "Cerveja Amstel", "volume": "350ml", "preco": "4,69"},
-            {"tipo": "Cerveja", "produto": "Cerveja Amstel Long", "volume": "355ml", "preco": "5,59"},
-            {"tipo": "Cerveja", "produto": "Cerveja Baden Baden", "volume": "350ml", "preco": "7,69"},
-            {"tipo": "Cerveja", "produto": "Cerveja Baden Baden Ipa", "volume": "350ml", "preco": "7,69"},
-            {"tipo": "Cerveja", "produto": "Cerveja Brama", "volume": "350ml", "preco": "4,49"},
-            {"tipo": "Cerveja", "produto": "Cerveja Brama Z", "volume": "350ml", "preco": "4,49"},
-            {"tipo": "Cerveja", "produto": "Cerveja Bud Long", "volume": "330ml", "preco": "6,79"},
-            {"tipo": "Cerveja", "produto": "Cerveja Corona Long", "volume": "330ml", "preco": "8,99"},
-            {"tipo": "Cerveja", "produto": "Cerveja Duplo Malte", "volume": "350ml", "preco": "5,29"},
-            {"tipo": "Cerveja", "produto": "Cerveja Eisenbah", "volume": "350ml", "preco": "4,89"},
-            {"tipo": "Cerveja", "produto": "Cerveja Eisenbah Long", "volume": "355ml", "preco": "7,39"},
-            {"tipo": "Cerveja", "produto": "Cerveja Heineken Long", "volume": "330ml", "preco": "8,29"},
-            {"tipo": "Cerveja", "produto": "Cerveja Heineken Z.", "volume": "350ml", "preco": "6,49"},
-            {"tipo": "Cerveja", "produto": "Cerveja Ipa Lohn", "volume": "600ml", "preco": "13,99"},
-            {"tipo": "Cerveja", "produto": "Cerveja Itaipava", "volume": "350ml", "preco": "3,49"},
-            {"tipo": "Cerveja", "produto": "Cerveja Itaipava Preta", "volume": "350ml", "preco": "6,19"},
-            {"tipo": "Cerveja", "produto": "Cerveja Original", "volume": "350ml", "preco": "5,99"},
-            {"tipo": "Cerveja", "produto": "Cerveja Patagonia Ipa", "volume": "473ml", "preco": "8,99"},
-            {"tipo": "Cerveja", "produto": "Cerveja Petra", "volume": "350ml", "preco": "3,79"},
-            {"tipo": "Cerveja", "produto": "Cerveja Schin", "volume": "350ml", "preco": "3,59"},
-            {"tipo": "Cerveja", "produto": "Cerveja Skol", "volume": "350ml", "preco": "4,49"},
-            {"tipo": "Cerveja", "produto": "Cerveja Spaten", "volume": "350ml", "preco": "5,99"},
-            {"tipo": "Cerveja", "produto": "Cerveja Spaten Long", "volume": "330ml", "preco": "7,39"},
-            {"tipo": "Cerveja", "produto": "Cerveja Patagonia", "volume": "473ml", "preco": "9,79"},
-            {"tipo": "Cerveja", "produto": "Cerveja Stela Long", "volume": "330ml", "preco": "7,49"},
-            {"tipo": "Cerveja", "produto": "Cervja Heineken L.", "volume": "350ml", "preco": "6,49"},
-            {"tipo": "Tabaco", "produto": "Charuto talvis", "volume": "un.", "preco": "10,00"},
-            {"tipo": "Tabaco", "produto": "Charuto titan", "volume": "un.", "preco": "22,99"},
-            {"tipo": "Snack", "produto": "Chips aipim", "volume": "90g", "preco": "5,99"},
-            {"tipo": "Whisky", "produto": "Chivas", "volume": "un.", "preco": "189,99"},
-            {"tipo": "Doce", "produto": "Chocolate Biss Pacote", "volume": "un.", "preco": "7,19"},
-            {"tipo": "Doce", "produto": "Chocolate Biss Xtra", "volume": "un.", "preco": "4,69"},
-            {"tipo": "Doce", "produto": "Chocolate Lacta Barra", "volume": "un.", "preco": "7,99"},
-            {"tipo": "Cigarro", "produto": "Cigarro Dunhill Azul", "volume": "un.", "preco": "14,25"},
-            {"tipo": "Cigarro", "produto": "Cigarro Dunhill Evoque", "volume": "un.", "preco": "15,25"},
-            {"tipo": "Cigarro", "produto": "Cigarro Dunhill Ice Boost", "volume": "un.", "preco": "12,00"},
-            {"tipo": "Cigarro", "produto": "Cigarro Dunhill Vermelho", "volume": "un.", "preco": "14,25"},
-            {"tipo": "Cigarro", "produto": "Cigarro Kent Azul", "volume": "un.", "preco": "7,50"},
-            {"tipo": "Cigarro", "produto": "Cigarro Kent Prata", "volume": "un.", "preco": "7,50"},
-            {"tipo": "Cigarro", "produto": "Cigarro Kent Vermelho", "volume": "un.", "preco": "7,50"},
-            {"tipo": "Cigarro", "produto": "Cigarro Lucky Strike Azul", "volume": "un.", "preco": "12,25"},
-            {"tipo": "Cigarro", "produto": "Cigarro Lucky Strike Fresh Mint", "volume": "un.", "preco": "12,50"},
-            {"tipo": "Cigarro", "produto": "Cigarro Rothmans Azul", "volume": "un.", "preco": "7,50"},
-            {"tipo": "Cigarro", "produto": "Cigarro Rothmans Prata", "volume": "un.", "preco": "10,25"},
-            {"tipo": "Cigarro", "produto": "Cigarro Rothmans Vermelho", "volume": "un.", "preco": "7,50"},
-            {"tipo": "Refrigerante", "produto": "Coca-Cola 2l", "volume": "2lt", "preco": "14,00"},
-            {"tipo": "Refrigerante", "produto": "Coca-Cola 600ml", "volume": "600ml", "preco": "6,59"},
-            {"tipo": "Refrigerante", "produto": "Coca-Cola KS", "volume": "200ml", "preco": "2,49"},
-            {"tipo": "Refrigerante", "produto": "Coca-Cola Lata", "volume": "350ml", "preco": "4,99"},
-            {"tipo": "Refrigerante", "produto": "Coca-Cola Z 2l", "volume": "2lt", "preco": "14,00"},
-            {"tipo": "Refrigerante", "produto": "Coca-Zero 600ml", "volume": "600ml", "preco": "6,59"},
-            {"tipo": "Refrigerante", "produto": "Coca-Zero KS", "volume": "200ml", "preco": "2,49"},
-            {"tipo": "Refrigerante", "produto": "Coca-Zero Lata", "volume": "350ml", "preco": "4,99"},
-            {"tipo": "Cachaça", "produto": "Corote", "volume": "500ml", "preco": "7,19"},
-            {"tipo": "Acessório", "produto": "Cuia silicone", "volume": "un.", "preco": "15,00"},
-            {"tipo": "Cachaça", "produto": "Cunhaque Conquistador", "volume": "un.", "preco": "17,90"},
-            {"tipo": "Acessório", "produto": "Dichavador", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Vodka", "produto": "Doca Vodka", "volume": "750 ml", "preco": "75,99"},
-            {"tipo": "Cachaça", "produto": "Dreyer", "volume": "1 litro", "preco": "33,99"},
-            {"tipo": "Cachaça", "produto": "Drurys", "volume": "1 litro", "preco": "59,99"},
-            {"tipo": "Cigarro", "produto": "Dunhil Avulso", "volume": "un.", "preco": "1,25"},
-            {"tipo": "Espumante", "produto": "Espumante Aurora Demi-Sec", "volume": "750 ml", "preco": "47,99"},
-            {"tipo": "Espumante", "produto": "Espumante Aurora Prosecco", "volume": "750 ml", "preco": "47,99"},
-            {"tipo": "Espumante", "produto": "Espumante Campolargo Moscatel", "volume": "750 ml", "preco": "33,49"},
-            {"tipo": "Espumante", "produto": "Espumante Chandon Passion", "volume": "750 ml", "preco": "149,99"},
-            {"tipo": "Espumante", "produto": "Espumante Chandon Réserve Brut", "volume": "750 ml", "preco": "149,99"},
-            {"tipo": "Espumante", "produto": "Espumante Freixenet Italian Rosé", "volume": "750 ml", "preco": "169,99"},
-            {"tipo": "Espumante", "produto": "Espumante Freixenet Prosecco DOC", "volume": "750 ml", "preco": "169,99"},
-            {"tipo": "Espumante", "produto": "Espumante Saint Germain Moscatel", "volume": "750 ml", "preco": "27,99"},
-            {"tipo": "Tabaco", "produto": "Essencia Narguile Zgy", "volume": "un.", "preco": "12,50"},
-            {"tipo": "Refrigerante", "produto": "Fanta Lata", "volume": "350ml", "preco": "4,59"},
-            {"tipo": "Acessório", "produto": "Filtro papelito", "volume": "un.", "preco": "12,00"},
-            {"tipo": "Bebida", "produto": "Gatorade", "volume": "500ml", "preco": "6,29"},
-            {"tipo": "Gelo", "produto": "Gelo", "volume": "3kg", "preco": "10,00"},
-            {"tipo": "Gelo", "produto": "Gelo De Sabor", "volume": "un.", "preco": "5,00"},
-            {"tipo": "Cigarro", "produto": "Gift", "volume": "un.", "preco": "5,50"},
-            {"tipo": "Gin", "produto": "Gin Doca Glow da Sereia", "volume": "750ml", "preco": "75,99"},
-            {"tipo": "Gin", "produto": "Gin Rocks Dry", "volume": "1L", "preco": "45,99"},
-            {"tipo": "Gin", "produto": "Gin Rocks Strawberry", "volume": "1L", "preco": "45,99"},
-            {"tipo": "Gin", "produto": "Gin Rocks Sunset", "volume": "1L", "preco": "45,99"},
-            {"tipo": "Gin", "produto": "Gin Rocks Watermelon", "volume": "1L", "preco": "45,99"},
-            {"tipo": "Gin", "produto": "Gordon's", "volume": "750ml", "preco": "96,99"},
-            {"tipo": "Gin", "produto": "Gordon's Premium Pink", "volume": "750ml", "preco": "96,99"},
-            {"tipo": "Vodka", "produto": "Grey Goose", "volume": "750ml", "preco": "264,99"},
-            {"tipo": "Refrigerante", "produto": "Guarana", "volume": "1,5lt", "preco": "8,99"},
-            {"tipo": "Refrigerante", "produto": "Guaraná Lata", "volume": "350ml", "preco": "4,59"},
-            {"tipo": "Tabaco", "produto": "Gudang", "volume": "carteira", "preco": "40,00"},
-            {"tipo": "Cigarro", "produto": "Gudang Avulso", "volume": "un.", "preco": "2,00"},
-            {"tipo": "Cachaça", "produto": "Ice 51", "volume": "275ml", "preco": "8,99"},
-            {"tipo": "Cachaça", "produto": "Ice Cabare", "volume": "275ml", "preco": "9,09"},
-            {"tipo": "Cachaça", "produto": "Ipioca Carvalho", "volume": "1L", "preco": "62,99"},
-            {"tipo": "Cachaça", "produto": "Ipioca Mestre", "volume": "1L", "preco": "33,99"},
-            {"tipo": "Cachaça", "produto": "Ipioca Ouro", "volume": "1L", "preco": "44,99"},
-            {"tipo": "Acessório", "produto": "Isqueiro Transparente", "volume": "un.", "preco": "2,99"},
-            {"tipo": "Combo", "produto": "Itencion + Baly 2lts + Gelo 3kg", "volume": "kit", "preco": "42,00"},
-            {"tipo": "Whisky", "produto": "Jack Daniel's Apple", "volume": "1 litro", "preco": "219,00"},
-            {"tipo": "Whisky", "produto": "Jack Daniel's Nº 7", "volume": "1 litro", "preco": "199,99"},
-            {"tipo": "Whisky", "produto": "Jack de mel", "volume": "un.", "preco": "199,99"},
-            {"tipo": "Cachaça", "produto": "Jamel", "volume": "1L", "preco": "15,99"},
-            {"tipo": "Whisky", "produto": "Jameson", "volume": "un.", "preco": "115,99"},
-            {"tipo": "Whisky", "produto": "Johnnie Walker Double Black", "volume": "—", "preco": "339,99"},
-            {"tipo": "Whisky", "produto": "Johnnie Walker Red Label", "volume": "1 litro", "preco": "119,99"},
-            {"tipo": "Whisky", "produto": "Johnnie Walker Red Label", "volume": "750 ml", "preco": "82,99"},
-            {"tipo": "Tequila", "produto": "José Cuervo", "volume": "750ml", "preco": "209,89"},
-            {"tipo": "Acessório", "produto": "Kit Estojo,Piteiras E Seda", "volume": "un.", "preco": "35,00"},
-            {"tipo": "Vinho", "produto": "La Linda Malbec Arg.", "volume": "750ml", "preco": "89,99"},
-            {"tipo": "Licor", "produto": "Licor 43 Horchata (Vegano)", "volume": "700ml", "preco": "269,99"},
-            {"tipo": "Licor", "produto": "Licor 43 Original", "volume": "750ml", "preco": "279,99"},
-            {"tipo": "Acessório", "produto": "Macarico Moon", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Licor", "produto": "Marula", "volume": "1L", "preco": "23,99"},
-            {"tipo": "Whisky", "produto": "Master Gold", "volume": "un.", "preco": "23,99"},
-            {"tipo": "Combo", "produto": "Master Gold + Baly 2lts + Gelo 3Kg", "volume": "kit", "preco": "45,00"},
-            {"tipo": "Snack", "produto": "Milho salgado", "volume": "100g", "preco": "8,99"},
-            {"tipo": "Snack", "produto": "Miojo Cup Noodles", "volume": "un.", "preco": "6,29"},
-            {"tipo": "Cachaça", "produto": "Nato Nobles", "volume": "1 litro", "preco": "73,99"},
-            {"tipo": "Tabaco", "produto": "P.Papelito Large", "volume": "un.", "preco": "5,00"},
-            {"tipo": "Doce", "produto": "Pacoca", "volume": "un.", "preco": "1,25"},
-            {"tipo": "Combo", "produto": "Passport + Baly 2lts + Gelo 3kg", "volume": "kit", "preco": "93,00"},
-            {"tipo": "Whisky", "produto": "Passport Selection", "volume": "1 litro", "preco": "73,99"},
-            {"tipo": "Cerveja", "produto": "Patagonia 740ml", "volume": "un.", "preco": "18,99"},
-            {"tipo": "Acessório", "produto": "Pegador de carvao", "volume": "un.", "preco": "15,00"},
-            {"tipo": "Cachaça", "produto": "Pingo D'Ouro Coco", "volume": "1L", "preco": "15,99"},
-            {"tipo": "Snack", "produto": "Pipoca Yoki", "volume": "un.", "preco": "5,29"},
-            {"tipo": "Doce", "produto": "Pirulito", "volume": "un.", "preco": "1,00"},
-            {"tipo": "Acessório", "produto": "Piteira Large", "volume": "un.", "preco": "4,99"},
-            {"tipo": "Tabaco", "produto": "Piteira Papelito Tradicional", "volume": "un.", "preco": "4,50"},
-            {"tipo": "Acessório", "produto": "Porta cigarro", "volume": "un.", "preco": "16,00"},
-            {"tipo": "Refrigerante", "produto": "Pureza", "volume": "1,5lt", "preco": "6,99"},
-            {"tipo": "Snack", "produto": "Queijo nacho", "volume": "100g", "preco": "5,99"},
-            {"tipo": "Combo", "produto": "Red + Baly 2lts + Gelo 3kg", "volume": "kit", "preco": "135,00"},
-            {"tipo": "Energético", "produto": "Red Bull 350ml", "volume": "350ml", "preco": "16,59"},
-            {"tipo": "Energético", "produto": "Red Bull 473ml", "volume": "473ml", "preco": "19,99"},
-            {"tipo": "Energético", "produto": "Red Bull Sabores", "volume": "250ml", "preco": "11,99"},
-            {"tipo": "Acessório", "produto": "Red Cup", "volume": "un.", "preco": "1,99"},
-            {"tipo": "Cigarro", "produto": "Rothmans Box Azul", "volume": "un.", "preco": "10,25"},
-            {"tipo": "Rum", "produto": "Rum Bacardi Carta Blanca", "volume": "1L", "preco": "79,99"},
-            {"tipo": "Rum", "produto": "Rum Bacardi Carta Ouro", "volume": "1L", "preco": "83,99"},
-            {"tipo": "Snack", "produto": "Salgadinho Club Social", "volume": "un.", "preco": "6,29"},
-            {"tipo": "Snack", "produto": "Salgadinho Lays", "volume": "un.", "preco": "11,59"},
-            {"tipo": "Snack", "produto": "Salgadinho Lays Chese", "volume": "un.", "preco": "12,49"},
-            {"tipo": "Snack", "produto": "Salgadinho Mini", "volume": "un.", "preco": "2,99"},
-            {"tipo": "Snack", "produto": "Salgadinho Slice", "volume": "un.", "preco": "4,89"},
-            {"tipo": "Snack", "produto": "Salgadinho Time", "volume": "un.", "preco": "2,99"},
-            {"tipo": "Acessório", "produto": "Seda OCB", "volume": "un.", "preco": "5,50"},
-            {"tipo": "Tabaco", "produto": "Seda Zomo Alfafa", "volume": "un.", "preco": "4,00"},
-            {"tipo": "Cerveja", "produto": "Skol Beats L.", "volume": "350ml", "preco": "8,19"},
-            {"tipo": "Cerveja", "produto": "Skol Beats Long", "volume": "269ml", "preco": "9,89"},
-            {"tipo": "Tabaco", "produto": "Smolking Grande", "volume": "un.", "preco": "7,49"},
-            {"tipo": "Tabaco", "produto": "Smolking Pequena", "volume": "un.", "preco": "6,99"},
-            {"tipo": "Refrigerante", "produto": "Sprite", "volume": "2lt", "preco": "12,00"},
-            {"tipo": "Refrigerante", "produto": "Sprite Lata", "volume": "350ml", "preco": "4,59"},
-            {"tipo": "Bebida", "produto": "Suco De Uva Campo Largo", "volume": "1lt", "preco": "18,99"},
-            {"tipo": "Tabaco", "produto": "Tabaco Amsterdan", "volume": "un.", "preco": "17,50"},
-            {"tipo": "Tabaco", "produto": "Tabaco Chilli", "volume": "un.", "preco": "19,99"},
-            {"tipo": "Tabaco", "produto": "Tabaco Captain Black", "volume": "un.", "preco": "27,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Lucky 7", "volume": "un.", "preco": "18,99"},
-            {"tipo": "Tabaco", "produto": "Tabaco Red Dog", "volume": "un.", "preco": "21,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Red Man", "volume": "un.", "preco": "22,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Rodeo", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Safari", "volume": "un.", "preco": "22,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Safari Jbl", "volume": "un.", "preco": "25,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Seven Stars", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Shag", "volume": "un.", "preco": "15,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Smokey", "volume": "un.", "preco": "16,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Stoker", "volume": "un.", "preco": "21,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Sting", "volume": "un.", "preco": "23,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Stoker Oi", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Stoker Traditional", "volume": "un.", "preco": "22,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Stoker Vanilla", "volume": "un.", "preco": "23,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Sweet Choice", "volume": "un.", "preco": "24,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Tuckey", "volume": "un.", "preco": "20,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Wolf Pack", "volume": "un.", "preco": "22,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo", "volume": "un.", "preco": "19,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Alfafa", "volume": "un.", "preco": "22,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Detox", "volume": "un.", "preco": "25,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Dry", "volume": "un.", "preco": "24,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Mojito", "volume": "un.", "preco": "25,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Super Lemon", "volume": "un.", "preco": "25,00"},
-            {"tipo": "Tabaco", "produto": "Tabaco Zomo Vanilla", "volume": "un.", "preco": "23,00"},
-            {"tipo": "Acessório", "produto": "Tesoura", "volume": "un.", "preco": "18,00"},
-            {"tipo": "Vinho", "produto": "Toro Arg", "volume": "750ml", "preco": "29,99"},
-            {"tipo": "Doce", "produto": "Trento Branco Avela", "volume": "un.", "preco": "4,69"},
-            {"tipo": "Doce", "produto": "Trento Preto/branco", "volume": "un.", "preco": "3,69"},
-            {"tipo": "Doce", "produto": "Trident", "volume": "un.", "preco": "3,00"},
-            {"tipo": "Vinho", "produto": "Vailatti Tinto Suave", "volume": "4 lts", "preco": "57,99"},
-            {"tipo": "Cachaça", "produto": "Velho Barreiro", "volume": "1L", "preco": "24,99"},
-            {"tipo": "Vinho", "produto": "Vinho Aurora Reserva 2023 Cabernet Sauvignon", "volume": "750ml", "preco": "55,89"},
-            {"tipo": "Vinho", "produto": "Vinho Aurora Vareta Asfino 2023 Cabernet Sauvignon", "volume": "750ml", "preco": "45,99"},
-            {"tipo": "Vinho", "produto": "Vinho Campo Largo Rosé", "volume": "750ml", "preco": "19,49"},
-            {"tipo": "Vinho", "produto": "Vinho Campo Largo Seco", "volume": "un.", "preco": "21,99"},
-            {"tipo": "Vinho", "produto": "Vinho Campo Largo Suave", "volume": "750ml", "preco": "21,99"},
-            {"tipo": "Vinho", "produto": "Vinho Girola Bordeaux", "volume": "750ml", "preco": "19,49"},
-            {"tipo": "Vinho", "produto": "Vinho Girola Branco Niagara", "volume": "750ml", "preco": "19,99"},
-            {"tipo": "Vinho", "produto": "Vinho Girola Rosé", "volume": "750ml", "preco": "19,99"},
-            {"tipo": "Vinho", "produto": "Vinho Montanheiro", "volume": "750ml", "preco": "32,99"},
-            {"tipo": "Vinho", "produto": "Vinho Sangue de Boi Suave", "volume": "750ml", "preco": "20,99"},
-            {"tipo": "Vinho", "produto": "Vinho Ventos do Sul Suave", "volume": "750ml", "preco": "19,49"},
-            {"tipo": "Vodka", "produto": "Vodka Absolut Citron", "volume": "750 ml", "preco": "166,99"},
-            {"tipo": "Vodka", "produto": "Vodka Absolut Extrakt", "volume": "750 ml", "preco": "179,99"},
-            {"tipo": "Vodka", "produto": "Vodka Absolut Raspberry", "volume": "750 ml", "preco": "166,99"},
-            {"tipo": "Vodka", "produto": "Vodka Intension", "volume": "900ml", "preco": "21,99"},
-            {"tipo": "Vodka", "produto": "Vodka Natasha", "volume": "900 ml", "preco": "34,99"},
-            {"tipo": "Vodka", "produto": "Vodka Orloff", "volume": "1 litro", "preco": "52,99"},
-            {"tipo": "Vodka", "produto": "Vodka Sky", "volume": "750 ml", "preco": "46,99"},
-            {"tipo": "Vodka", "produto": "Vodka Smirnoff", "volume": "998 ml", "preco": "49,99"},
-            {"tipo": "Vodka", "produto": "Vodka Smirnoff", "volume": "600 ml", "preco": "32,99"},
-            {"tipo": "Whisky", "produto": "Whiskey Howler Dead Monkey Spirit", "volume": "—", "preco": "239,99"},
-            {"tipo": "Whisky", "produto": "White Horse", "volume": "1 litro", "preco": "95,99"},
-            {"tipo": "Tabaco", "produto": "Zoomo Seda", "volume": "un.", "preco": "2,99"},
-            {"tipo": "Cigarro", "produto": "Classic", "volume": "un.", "preco": "6,50"}
+            // Cervejas
+            { produto: "Skol Lata", tipo: "Cerveja", volume: "350ml", preco: "3,50" },
+            { produto: "Brahma Lata", tipo: "Cerveja", volume: "350ml", preco: "3,50" },
+            { produto: "Antarctica Lata", tipo: "Cerveja", volume: "350ml", preco: "3,50" },
+            { produto: "Budweiser Lata", tipo: "Cerveja", volume: "350ml", preco: "4,50" },
+            { produto: "Heineken Lata", tipo: "Cerveja", volume: "350ml", preco: "5,50" },
+            { produto: "Stella Artois Lata", tipo: "Cerveja", volume: "350ml", preco: "5,50" },
+            { produto: "Corona Long Neck", tipo: "Cerveja", volume: "330ml", preco: "6,00" },
+            { produto: "Eisenbahn Lata", tipo: "Cerveja", volume: "350ml", preco: "7,00" },
+            { produto: "Skol Lata Pack 12", tipo: "Cerveja", volume: "350ml x12", preco: "38,00" },
+            { produto: "Brahma Lata Pack 12", tipo: "Cerveja", volume: "350ml x12", preco: "38,00" },
+            { produto: "Antarctica Lata Pack 12", tipo: "Cerveja", volume: "350ml x12", preco: "38,00" },
+            { produto: "Heineken Pack 12", tipo: "Cerveja", volume: "330ml x12", preco: "60,00" },
+            
+            // Whiskies
+            { produto: "Red Label", tipo: "Whisky", volume: "1L", preco: "85,00" },
+            { produto: "Black Label", tipo: "Whisky", volume: "1L", preco: "180,00" },
+            { produto: "Jack Daniels", tipo: "Whisky", volume: "1L", preco: "160,00" },
+            { produto: "Chivas 12 Anos", tipo: "Whisky", volume: "1L", preco: "220,00" },
+            { produto: "Ballantines", tipo: "Whisky", volume: "1L", preco: "90,00" },
+            { produto: "Teacher's", tipo: "Whisky", volume: "1L", preco: "75,00" },
+            { produto: "White Horse", tipo: "Whisky", volume: "1L", preco: "70,00" },
+            { produto: "Old Parr", tipo: "Whisky", volume: "1L", preco: "120,00" },
+            
+            // Vodkas
+            { produto: "Smirnoff", tipo: "Vodka", volume: "1L", preco: "55,00" },
+            { produto: "Absolut", tipo: "Vodka", volume: "1L", preco: "85,00" },
+            { produto: "Grey Goose", tipo: "Vodka", volume: "750ml", preco: "180,00" },
+            { produto: "Orloff", tipo: "Vodka", volume: "1L", preco: "35,00" },
+            { produto: "Skyy", tipo: "Vodka", volume: "1L", preco: "65,00" },
+            { produto: "Belvedere", tipo: "Vodka", volume: "750ml", preco: "200,00" },
+            
+            // Gins
+            { produto: "Bombay Sapphire", tipo: "Gin", volume: "750ml", preco: "95,00" },
+            { produto: "Tanqueray", tipo: "Gin", volume: "750ml", preco: "85,00" },
+            { produto: "Hendricks", tipo: "Gin", volume: "750ml", preco: "180,00" },
+            { produto: "Gin Tônica Schweppes", tipo: "Gin", volume: "269ml", preco: "4,50" },
+            { produto: "Seagers", tipo: "Gin", volume: "1L", preco: "45,00" },
+            { produto: "Gordon's", tipo: "Gin", volume: "750ml", preco: "65,00" },
+            
+            // Cachaças
+            { produto: "51 Pirassununga", tipo: "Cachaça", volume: "1L", preco: "25,00" },
+            { produto: "Ypióca Ouro", tipo: "Cachaça", volume: "1L", preco: "35,00" },
+            { produto: "Salinas", tipo: "Cachaça", volume: "1L", preco: "30,00" },
+            { produto: "Velho Barreiro", tipo: "Cachaça", volume: "1L", preco: "18,00" },
+            { produto: "Leblon", type: "Cachaça", volume: "750ml", preco: "55,00" },
+            
+            // Vinhos
+            { produto: "Casillero del Diablo", tipo: "Vinho", volume: "750ml", preco: "45,00" },
+            { produto: "Santa Rita 120", tipo: "Vinho", volume: "750ml", preco: "35,00" },
+            { produto: "Frontera", tipo: "Vinho", volume: "750ml", preco: "25,00" },
+            { produto: "Gato Negro", tipo: "Vinho", volume: "750ml", preco: "30,00" },
+            { produto: "Salton Talento", tipo: "Vinho", volume: "750ml", preco: "22,00" },
+            { produto: "Marcus James", tipo: "Vinho", volume: "750ml", preco: "18,00" },
+            
+            // Refrigerantes
+            { produto: "Coca Cola Lata", tipo: "Refrigerante", volume: "350ml", preco: "3,50" },
+            { produto: "Pepsi Lata", tipo: "Refrigerante", volume: "350ml", preco: "3,00" },
+            { produto: "Guaraná Antarctica Lata", tipo: "Refrigerante", volume: "350ml", preco: "3,50" },
+            { produto: "Fanta Laranja Lata", tipo: "Refrigerante", volume: "350ml", preco: "3,50" },
+            { produto: "Sprite Lata", tipo: "Refrigerante", volume: "350ml", preco: "3,50" },
+            { produto: "Coca Cola 2L", tipo: "Refrigerante", volume: "2L", preco: "8,00" },
+            { produto: "Guaraná Antarctica 2L", tipo: "Refrigerante", volume: "2L", preco: "8,00" },
+            { produto: "Schweppes Tônica", tipo: "Refrigerante", volume: "350ml", preco: "4,00" },
+            
+            // Snacks
+            { produto: "Amendoim Japan", tipo: "Snack", volume: "500g", preco: "12,00" },
+            { produto: "Castanha de Caju", tipo: "Snack", volume: "200g", preco: "15,00" },
+            { produto: "Mix de Nozes", tipo: "Snack", volume: "300g", preco: "18,00" },
+            { produto: "Pistache Torrado", tipo: "Snack", volume: "200g", preco: "25,00" },
+            { produto: "Chips Ruffles", tipo: "Snack", volume: "150g", preco: "8,00" },
+            { produto: "Doritos Nacho", tipo: "Snack", volume: "150g", preco: "8,50" },
+            
+            // Tabaco
+            { produto: "Marlboro Red", tipo: "Tabaco", volume: "20 un", preco: "12,00" },
+            { produto: "Lucky Strike", tipo: "Tabaco", volume: "20 un", preco: "11,00" },
+            { produto: "Camel", tipo: "Tabaco", volume: "20 un", preco: "13,00" },
+            { produto: "Parliament", tipo: "Tabaco", volume: "20 un", preco: "14,00" }
         ];
+
+        const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
+        
+        const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw0RUgDrVXv8_Qh2m3X-vd7FtzoY0sJ7B5_82_NjSeoocDiBCl7DfQJpS-ehzCSnleeVQ/exec";
+
+        // App state
         let cart = [];
-        let quantities = {};
+        let filteredProducts = [...products];
+        let selectedCategory = 'Todos';
+        let currentStep = 'cart'; // cart, customer, address
+        let customerData = { nome: '', telefone: '' };
+        let addressData = { bairro: '', rua: '', numero: '', cep: '' };
         let deliveryFee = 0;
+        let isProcessing = false;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            products.forEach((product, index) => {
-                quantities[index] = 1;
-            });
-
-            document.querySelectorAll('.category-filter').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelectorAll('.category-filter').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    const category = this.dataset.category;
-                    if (category === 'all') {
-                        renderProducts();
-                    } else {
-                        const filtered = products.filter(product => product.tipo === category);
-                        renderProducts(filtered);
-                    }
-                });
-            });
-            
-            document.getElementById('searchInput').addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                const filtered = products.filter(product => 
-                    product.produto.toLowerCase().includes(searchTerm) ||
-                    product.tipo.toLowerCase().includes(searchTerm)
-                );
-                renderProducts(filtered);
-            });
-            
-            const fullscreenBtn = document.getElementById('fullscreenBtn');
-            if(fullscreenBtn) {
-                fullscreenBtn.addEventListener('click', () => {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(err => {
-                            alert(`Não foi possível ativar a tela cheia: ${err.message}`);
-                        });
-                    } else {
-                        document.exitFullscreen();
-                    }
-                });
-            }
-
-            renderProducts();
-            updateCartUI(); 
-        });
-
-        function navigateToCartStep(step) {
-            const step1 = document.getElementById('cart-step-1');
-            const step2 = document.getElementById('cart-step-2');
-            const cartTitle = document.getElementById('cart-title');
-
-            if (step === 1) {
-                step1.style.display = 'flex';
-                step2.style.display = 'none';
-                cartTitle.textContent = '🛒 Meu Carrinho';
-            } else if (step === 2) {
-                step1.style.display = 'none';
-                step2.style.display = 'flex';
-                cartTitle.textContent = '📍 Endereço de Entrega';
-                calculateDelivery(); 
-            }
-        }
-
-        function renderProducts(productsToRender = products) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-            if (productsToRender.length === 0) {
-                grid.innerHTML = '<p style="color: white; text-align: center; grid-column: 1 / -1;">Nenhum produto encontrado.</p>';
-                return;
-            }
-            productsToRender.forEach((product) => {
-                const productIndex = products.findIndex(p => p.produto === product.produto && p.volume === product.volume);
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                const categoryEmoji = getCategoryEmoji(product.tipo);
-                card.innerHTML = `
-                    <div class="product-category">${categoryEmoji} ${product.tipo}</div>
-                    <div class="product-name">${product.produto}</div>
-                    <div class="product-volume">${product.volume}</div>
-                    <div class="product-price">R$ ${product.preco}</div>
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="changeQuantity(${productIndex}, -1)">−</button>
-                        <div class="quantity-display" id="qty-${productIndex}">${quantities[productIndex]}</div>
-                        <button class="quantity-btn" onclick="changeQuantity(${productIndex}, 1)">+</button>
-                    </div>
-                    <button class="add-to-cart" onclick="addToCart(${productIndex})">
-                        🛒 Adicionar ao Carrinho
-                    </button>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
+        // Utility functions
         function getCategoryEmoji(category) {
             const emojis = {
-                'Cerveja': '🍺', 'Whisky': '🥃', 'Vodka': '🍸', 'Gin': '🍸', 'Cachaça': '🍹', 'Vinho': '🍷',
-                'Refrigerante': '🥤', 'Snack': '🍿', 'Tabaco': '🚬', 'Cigarro': '🚬', 'Doce': '🍫',
-                'Energético': '⚡', 'Rum': '🍹', 'Licor': '🍷', 'Combo': '🎁', 'Acessório': '🔧',
-                'Bebida': '🧊', 'Gelo': '🧊', 'Espumante': '🥂', 'Tequila': '🍹', 'Carvao': '⚫'
+                'Cerveja': '🍺',
+                'Whisky': '🥃',
+                'Vodka': '🍸',
+                'Gin': '🍸',
+                'Cachaça': '🥃',
+                'Vinho': '🍷',
+                'Refrigerante': '🥤',
+                'Snack': '🥜',
+                'Tabaco': '🚬'
             };
             return emojis[category] || '📦';
         }
 
+        function formatPrice(price) {
+            return parseFloat(price.replace(',', '.'));
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-${type === 'success' ? 'check-circle text-green-600' : type === 'error' ? 'exclamation-circle text-red-600' : 'info-circle text-blue-600'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cartBadge');
+            
+            if (totalItems > 0) {
+                badge.textContent = totalItems;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // Product functions
+        function renderCategories() {
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = categories.map(category => `
+                <button 
+                    onclick="selectCategory('${category}')"
+                    class="px-4 py-2 rounded-full font-medium transition-all transform hover:scale-105 ${
+                        selectedCategory === category
+                            ? 'bg-black text-white hover:bg-gray-800 border-black shadow-lg'
+                            : 'border border-gray-300 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-700'
+                    }"
+                >
+                    ${category}
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            renderCategories();
+            filterProducts();
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredProducts = products.filter(product => {
+                const matchesSearch = product.produto.toLowerCase().includes(searchTerm) ||
+                                    product.tipo.toLowerCase().includes(searchTerm);
+                const matchesCategory = selectedCategory === 'Todos' || product.tipo === selectedCategory;
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsGrid');
+            
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="text-6xl mb-6 opacity-50">🔍</div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Nenhum produto encontrado</h3>
+                        <p class="text-gray-500 text-lg">Tente ajustar sua pesquisa ou filtros</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map((product, index) => `
+                <div class="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-cyan-300 bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm rounded-lg">
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- Category Badge -->
+                            <div class="flex justify-between items-start">
+                                <span class="bg-black text-white border-0 font-medium px-3 py-1 rounded text-sm">
+                                    ${getCategoryEmoji(product.tipo)} ${product.tipo}
+                                </span>
+                                <div class="text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-full border">
+                                    ${product.volume}
+                                </div>
+                            </div>
+
+                            <!-- Product Name -->
+                            <div>
+                                <h3 class="font-semibold text-lg text-gray-900 group-hover:text-black transition-colors leading-tight">
+                                    ${product.produto}
+                                </h3>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="text-2xl font-bold text-cyan-600 group-hover:text-cyan-700 transition-colors">
+                                R$ ${product.preco}
+                            </div>
+
+                            <!-- Quantity Controls -->
+                            <div class="flex items-center justify-center space-x-4 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                                <button
+                                    onclick="changeQuantity(${index}, -1)"
+                                    class="h-8 w-8 p-0 rounded-full border border-gray-300 hover:border-cyan-400 hover:bg-cyan-50 transition-all flex items-center justify-center"
+                                >
+                                    <i class="fas fa-minus text-sm"></i>
+                                </button>
+                                
+                                <span class="font-bold text-xl min-w-[2.5rem] text-center text-gray-900" id="quantity-${index}">
+                                    1
+                                </span>
+                                
+                                <button
+                                    onclick="changeQuantity(${index}, 1)"
+                                    class="h-8 w-8 p-0 rounded-full border border-gray-300 hover:border-cyan-400 hover:bg-cyan-50 transition-all flex items-center justify-center"
+                                >
+                                    <i class="fas fa-plus text-sm"></i>
+                                </button>
+                            </div>
+
+                            <!-- Add to Cart Button -->
+                            <button
+                                onclick="addToCart(${index})"
+                                id="btn-${index}"
+                                class="w-full py-3 font-semibold transition-all duration-300 rounded-xl bg-black hover:bg-gray-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                            >
+                                <i class="fas fa-shopping-cart mr-2"></i>
+                                Adicionar ao Carrinho
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        let productQuantities = {};
+
         function changeQuantity(index, change) {
-            quantities[index] = Math.max(1, (quantities[index] || 1) + change);
-            document.getElementById(`qty-${index}`).textContent = quantities[index];
+            const currentQty = productQuantities[index] || 1;
+            const newQty = Math.max(1, currentQty + change);
+            productQuantities[index] = newQty;
+            document.getElementById(`quantity-${index}`).textContent = newQty;
         }
 
         function addToCart(index) {
-            const product = products[index];
-            const quantity = quantities[index];
-            const existingItem = cart.find(item => item.product.produto === product.produto && item.product.volume === product.volume);
+            const product = filteredProducts[index];
+            const quantity = productQuantities[index] || 1;
+            
+            const existingItem = cart.find(item => 
+                item.product.produto === product.produto && 
+                item.product.volume === product.volume
+            );
+
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                cart.push({ product: product, quantity: quantity });
+                cart.push({ product, quantity });
             }
-            updateCartUI();
-            const button = event.target;
-            button.textContent = '✅ Adicionado!';
-            button.style.background = 'var(--accent-green)';
+
+            // Reset quantity
+            productQuantities[index] = 1;
+            document.getElementById(`quantity-${index}`).textContent = 1;
+
+            // Show feedback
+            const btn = document.getElementById(`btn-${index}`);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Adicionado!';
+            btn.className = btn.className.replace('bg-black hover:bg-gray-800', 'bg-cyan-500 hover:bg-cyan-500');
+            
             setTimeout(() => {
-                button.textContent = '🛒 Adicionar ao Carrinho';
-                button.style.background = '';
+                btn.innerHTML = originalText;
+                btn.className = btn.className.replace('bg-cyan-500 hover:bg-cyan-500', 'bg-black hover:bg-gray-800');
             }, 1500);
+
+            updateCartBadge();
+            showToast(`${product.produto} adicionado ao carrinho!`, 'success');
         }
 
-        function calculateDelivery() {
-            const neighborhood = document.getElementById('bairro').value;
-            const feeMessageEl = document.getElementById('delivery-fee-message');
+        // Cart functions
+        function openCart() {
+            document.getElementById('sidebarOverlay').classList.add('show');
+            document.getElementById('cartSidebar').classList.add('show');
+            renderCartContent();
+        }
+
+        function closeCart() {
+            document.getElementById('sidebarOverlay').classList.remove('show');
+            document.getElementById('cartSidebar').classList.remove('show');
+            resetCartState();
+        }
+
+        function resetCartState() {
+            currentStep = 'cart';
+            customerData = { nome: '', telefone: '' };
+            addressData = { bairro: '', rua: '', numero: '', cep: '' };
+            deliveryFee = 0;
+            isProcessing = false;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            renderCartContent();
+            showToast('Item removido do carrinho', 'info');
+        }
+
+        function renderCartContent() {
+            const sidebar = document.getElementById('cartSidebar');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
             
-            switch(neighborhood) {
+            if (currentStep === 'cart') {
+                sidebar.innerHTML = renderCartStep(totalItems);
+            } else if (currentStep === 'customer') {
+                sidebar.innerHTML = renderCustomerStep();
+            } else if (currentStep === 'address') {
+                sidebar.innerHTML = renderAddressStep();
+            }
+        }
+
+        function renderCartStep(totalItems) {
+            const subtotal = cart.reduce((sum, item) => {
+                const price = formatPrice(item.product.preco);
+                return sum + (price * item.quantity);
+            }, 0);
+
+            return `
+                <!-- Header -->
+                <div class="bg-black text-white p-6 relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-cyan-500/10"></div>
+                    <h2 class="text-white flex items-center gap-2 relative z-10 text-xl font-semibold">
+                        <i class="fas fa-shopping-bag text-cyan-300"></i>
+                        Meu Carrinho (${totalItems})
+                    </h2>
+                    <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 flex flex-col">
+                    ${cart.length === 0 ? `
+                        <div class="flex-1 flex items-center justify-center p-6">
+                            <div class="text-center py-12">
+                                <i class="fas fa-shopping-bag text-6xl text-gray-300 mb-4"></i>
+                                <h3 class="text-lg font-semibold text-gray-600 mb-2">Carrinho Vazio</h3>
+                                <p class="text-gray-500">Adicione alguns produtos incríveis!</p>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="flex-1 overflow-y-auto p-6">
+                            <div class="space-y-4">
+                                ${cart.map((item, index) => {
+                                    const itemTotal = formatPrice(item.product.preco) * item.quantity;
+                                    return `
+                                        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                            <div class="flex justify-between items-start">
+                                                <div class="flex-1">
+                                                    <h4 class="font-semibold text-gray-900">${item.product.produto}</h4>
+                                                    <p class="text-sm text-gray-600">${item.product.volume} • Qtd: ${item.quantity}</p>
+                                                    <p class="font-bold text-cyan-600 mt-1">
+                                                        R$ ${itemTotal.toFixed(2).replace('.', ',')}
+                                                    </p>
+                                                </div>
+                                                <button
+                                                    onclick="removeFromCart(${index})"
+                                                    class="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-2 transition-all"
+                                                >
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        <div class="border-t bg-white p-6">
+                            <div class="space-y-3 mb-6">
+                                <div class="flex justify-between text-lg font-semibold">
+                                    <span>Subtotal</span>
+                                    <span>R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onclick="goToCustomerStep()"
+                                class="w-full bg-black hover:bg-gray-800 text-white py-3 rounded-xl font-semibold transition-all hover:shadow-lg"
+                            >
+                                Continuar para Checkout
+                            </button>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderCustomerStep() {
+            return `
+                <!-- Header -->
+                <div class="bg-black text-white p-6 relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-cyan-500/10"></div>
+                    
+                    <!-- Progress Steps -->
+                    <div class="flex items-center justify-center gap-4 mb-4 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-cyan-400 text-black">
+                                <i class="fas fa-user text-sm"></i>
+                            </div>
+                            <span class="text-sm font-medium">Dados</span>
+                        </div>
+                        <div class="w-8 h-0.5 bg-gray-600"></div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-600 text-gray-300">
+                                <i class="fas fa-map-marker-alt text-sm"></i>
+                            </div>
+                            <span class="text-sm font-medium">Endereço</span>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-white flex items-center gap-2 relative z-10 text-xl font-semibold">
+                        <i class="fas fa-user text-cyan-300"></i>
+                        Seus Dados
+                    </h2>
+                    <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div class="space-y-6">
+                        <div class="bg-cyan-50 border border-cyan-200 rounded-xl p-4 mb-6">
+                            <div class="flex items-center gap-2 text-cyan-700 mb-2">
+                                <i class="fas fa-user"></i>
+                                <span class="font-medium">Informações para Contato</span>
+                            </div>
+                            <p class="text-sm text-cyan-600">
+                                Precisamos desses dados para confirmar seu pedido e entrega.
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-medium">Nome Completo *</label>
+                            <input
+                                type="text"
+                                id="customerName"
+                                placeholder="Seu nome completo"
+                                value="${customerData.nome}"
+                                oninput="updateCustomerData('nome', this.value)"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                            />
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-medium">WhatsApp/Telefone *</label>
+                            <input
+                                type="text"
+                                id="customerPhone"
+                                placeholder="(48) 99999-9999"
+                                value="${customerData.telefone}"
+                                oninput="updateCustomerPhone(this.value)"
+                                maxlength="15"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                            />
+                            <p class="text-xs text-gray-500">
+                                Usaremos para confirmar o pedido e avisar sobre a entrega
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t bg-white p-6">
+                    <div class="flex gap-3">
+                        <button 
+                            onclick="backToCart()"
+                            class="flex-1 border border-gray-300 hover:bg-gray-50 rounded-xl py-3 transition-all"
+                        >
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Voltar
+                        </button>
+                        <button 
+                            onclick="goToAddressStep()"
+                            ${!customerData.nome || !customerData.telefone ? 'disabled' : ''}
+                            class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Continuar para Endereço
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAddressStep() {
+            const subtotal = cart.reduce((sum, item) => {
+                const price = formatPrice(item.product.preco);
+                return sum + (price * item.quantity);
+            }, 0);
+            const total = subtotal + deliveryFee;
+
+            return `
+                <!-- Header -->
+                <div class="bg-black text-white p-6 relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-cyan-500/10"></div>
+                    
+                    <!-- Progress Steps -->
+                    <div class="flex items-center justify-center gap-4 mb-4 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-green-500 text-white">
+                                <i class="fas fa-check text-sm"></i>
+                            </div>
+                            <span class="text-sm font-medium">Dados</span>
+                        </div>
+                        <div class="w-8 h-0.5 bg-gray-600"></div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-cyan-400 text-black">
+                                <i class="fas fa-map-marker-alt text-sm"></i>
+                            </div>
+                            <span class="text-sm font-medium">Endereço</span>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-white flex items-center gap-2 relative z-10 text-xl font-semibold">
+                        <i class="fas fa-map-marker-alt text-cyan-300"></i>
+                        Endereço de Entrega
+                    </h2>
+                    <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="font-medium">Bairro *</label>
+                            <select
+                                id="neighborhood"
+                                onchange="updateNeighborhood(this.value)"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                            >
+                                <option value="">Selecione o bairro...</option>
+                                <option value="sambaqui" ${addressData.bairro === 'sambaqui' ? 'selected' : ''}>Sambaqui</option>
+                                <option value="barra-do-sambaqui" ${addressData.bairro === 'barra-do-sambaqui' ? 'selected' : ''}>Barra do Sambaqui</option>
+                                <option value="santo-antonio" ${addressData.bairro === 'santo-antonio' ? 'selected' : ''}>Santo Antônio de Lisboa</option>
+                                <option value="outro" ${addressData.bairro === 'outro' ? 'selected' : ''}>Outro Bairro</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-medium">Rua *</label>
+                            <input
+                                type="text"
+                                id="street"
+                                placeholder="Nome da sua rua"
+                                value="${addressData.rua}"
+                                oninput="updateAddressData('rua', this.value)"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                            />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="font-medium">CEP</label>
+                                <input
+                                    type="text"
+                                    id="cep"
+                                    placeholder="88000-000"
+                                    value="${addressData.cep}"
+                                    oninput="updateAddressData('cep', this.value)"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                                />
+                            </div>
+                            <div class="space-y-2">
+                                <label class="font-medium">Número *</label>
+                                <input
+                                    type="text"
+                                    id="number"
+                                    placeholder="123"
+                                    value="${addressData.numero}"
+                                    oninput="updateAddressData('numero', this.value)"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t bg-white p-6">
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span>R$ ${subtotal.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Taxa de Entrega</span>
+                            <span>
+                                ${addressData.bairro === 'outro' ? 'A combinar' : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}
+                            </span>
+                        </div>
+                        <div class="border-t pt-2">
+                            <div class="flex justify-between text-lg font-bold">
+                                <span>Total</span>
+                                <span>R$ ${total.toFixed(2).replace('.', ',')}</span>
+                            </div>
+                        </div>
+                        ${addressData.bairro === 'outro' ? '<p class="text-sm text-gray-600">Taxa de R$ 5/km a ser combinada</p>' : ''}
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button 
+                            onclick="backToCustomer()"
+                            class="flex-1 border border-gray-300 hover:bg-gray-50 rounded-xl py-3 transition-all"
+                        >
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Voltar
+                        </button>
+                        <button 
+                            onclick="finishOrder()"
+                            ${!customerData.nome || !customerData.telefone || !addressData.bairro || !addressData.rua || !addressData.numero || isProcessing ? 'disabled' : ''}
+                            class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                            id="finishBtn"
+                        >
+                            ${isProcessing ? `
+                                <div class="flex items-center justify-center gap-2">
+                                    <div class="spinner"></div>
+                                    Processando...
+                                </div>
+                            ` : 'Finalizar Pedido'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Step navigation
+        function goToCustomerStep() {
+            currentStep = 'customer';
+            renderCartContent();
+        }
+
+        function goToAddressStep() {
+            if (!customerData.nome || !customerData.telefone) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            currentStep = 'address';
+            renderCartContent();
+        }
+
+        function backToCart() {
+            currentStep = 'cart';
+            renderCartContent();
+        }
+
+        function backToCustomer() {
+            currentStep = 'customer';
+            renderCartContent();
+        }
+
+        // Data updates
+        function updateCustomerData(field, value) {
+            customerData[field] = value;
+        }
+
+        function updateCustomerPhone(value) {
+            // Simple phone formatting
+            let formatted = value.replace(/\D/g, '');
+            if (formatted.length <= 11) {
+                if (formatted.length > 6) {
+                    formatted = formatted.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                } else if (formatted.length > 2) {
+                    formatted = formatted.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+                } else if (formatted.length > 0) {
+                    formatted = formatted.replace(/(\d{0,2})/, '($1');
+                }
+            }
+            customerData.telefone = formatted;
+            document.getElementById('customerPhone').value = formatted;
+        }
+
+        function updateAddressData(field, value) {
+            addressData[field] = value;
+        }
+
+        function updateNeighborhood(bairro) {
+            addressData.bairro = bairro;
+            
+            switch(bairro) {
                 case 'sambaqui':
                 case 'barra-do-sambaqui':
                     deliveryFee = 5;
-                    feeMessageEl.textContent = '';
                     break;
                 case 'santo-antonio':
                     deliveryFee = 10;
-                    feeMessageEl.textContent = '';
                     break;
                 case 'outro':
-                    deliveryFee = 0; 
-                    feeMessageEl.textContent = 'Taxa de R$ 5/km a ser combinada.';
+                    deliveryFee = 0;
                     break;
                 default:
                     deliveryFee = 0;
-                    feeMessageEl.textContent = 'Selecione um bairro para ver a taxa.';
             }
-            updateCartUI();
+            
+            renderCartContent();
         }
 
-        function updateCartUI() {
-            const cartItemsEl = document.getElementById('cartItems');
-            const cartCount = document.getElementById('cartCount');
-            const cartSidebar = document.getElementById('cartSidebar');
-            const goToDeliveryBtn = document.getElementById('goToDeliveryBtn');
-            const checkoutBtn = document.getElementById('checkoutBtn');
+        // Checkout functions
+        async function sendToGoogleSheets(orderData) {
+            try {
+                const sheetsData = {
+                    timestamp: new Date().toLocaleString('pt-BR'),
+                    customerName: orderData.customer.nome,
+                    customerPhone: orderData.customer.telefone,
+                    address: `${orderData.address.rua}, ${orderData.address.numero}`,
+                    neighborhood: orderData.address.bairro,
+                    cep: orderData.address.cep || '',
+                    items: orderData.items.map(item => 
+                        `${item.quantity}x ${item.product.produto} (${item.product.volume})`
+                    ).join('; '),
+                    subtotal: orderData.subtotal,
+                    deliveryFee: orderData.deliveryFee,
+                    total: orderData.total,
+                    itemsCount: orderData.items.length,
+                    totalQuantity: orderData.items.reduce((sum, item) => sum + item.quantity, 0)
+                };
 
-            // Se o carrinho estiver vazio, esconde tudo e reseta
-            if (cart.length === 0) {
-                cartItemsEl.innerHTML = '<div class="empty-cart"><h3>Carrinho Vazio</h3><p>Adicione alguns produtos incríveis!</p></div>';
-                cartCount.style.display = 'none';
-                goToDeliveryBtn.style.display = 'none'; // Esconde o botão de continuar
-                document.getElementById('subtotalAmountStep1').parentElement.style.display = 'none'; // Esconde a linha de subtotal
-                return;
+                console.log('Enviando para Google Sheets:', sheetsData);
+
+                await fetch(SHEETS_WEBHOOK_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(sheetsData)
+                });
+
+                showToast('Pedido registrado com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao enviar para Google Sheets:', error);
+                showToast('Erro ao registrar pedido, mas será enviado via WhatsApp', 'error');
             }
-
-            // Se tem itens, mostra os elementos da Etapa 1
-            goToDeliveryBtn.style.display = 'flex';
-            document.getElementById('subtotalAmountStep1').parentElement.style.display = 'flex';
-            
-            let subtotal = 0;
-            let itemCount = 0;
-            
-            // **AQUI**: Gera o HTML para cada item do carrinho
-            let cartItemsHTML = cart.map((item, cartIndex) => {
-                // **AQUI**: Calcula o total para este item (preço * quantidade)
-                const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
-                subtotal += itemTotal;
-                itemCount += item.quantity;
-                return `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.product.produto}</div>
-                            <div class="cart-item-details">${item.product.volume} • Qtd: ${item.quantity}</div>
-                            <div class="cart-item-price">R$ ${itemTotal.toFixed(2).replace('.', ',')}</div>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="remove-item" onclick="removeFromCart(${cartIndex})">🗑️ Remover</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            cartItemsEl.innerHTML = cartItemsHTML;
-            cartCount.textContent = itemCount;
-            cartCount.style.display = 'flex';
-
-            const total = subtotal + deliveryFee;
-
-            // **AQUI**: Atualiza os valores em AMBAS as etapas
-            document.getElementById('subtotalAmountStep1').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            document.getElementById('subtotalAmountStep2').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-            
-            if (document.getElementById('bairro').value === 'outro') {
-                document.getElementById('deliveryFeeAmount').textContent = 'A combinar';
-            } else {
-                document.getElementById('deliveryFeeAmount').textContent = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
-            }
-
-            // **AQUI**: Atualiza o TOTAL FINAL na etapa de endereço
-            document.getElementById('totalAmount').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
-            
-            checkoutBtn.disabled = !document.getElementById('bairro').value;
         }
 
-        function removeFromCart(cartIndex) {
-            cart.splice(cartIndex, 1);
-            if (cart.length === 0) {
-                deliveryFee = 0; 
-                document.getElementById('bairro').value = ''; 
-                navigateToCartStep(1); // Volta para a sacola se esvaziar
-            }
-            calculateDelivery();
-            updateCartUI();
-        }
-
-        function toggleCart() {
-            document.getElementById('cartSidebar').classList.toggle('open');
-            navigateToCartStep(1); 
-        }
-
-        function checkout() {
-            const bairroEl = document.getElementById('bairro');
-            const rua = document.getElementById('rua').value;
-            const numero = document.getElementById('numero').value;
-            const cep = document.getElementById('cep').value;
-            const bairroText = bairroEl.options[bairroEl.selectedIndex].text;
-
-            if (!bairroEl.value || !rua || !numero) {
-                alert('Por favor, preencha o bairro, a rua e o número para a entrega.');
-                return;
-            }
-
-            let message = '🛒 *NOVO PEDIDO - POLO NORTE*\n\n';
-            let subtotal = 0;
+        function sendToWhatsApp(orderData) {
+            let message = '🛒 *NOVO PEDIDO - POLO NORTE*\\n\\n';
             
-            message += '🛍️ *PRODUTOS:*\n';
-            cart.forEach(item => {
-                const itemTotal = parseFloat(item.product.preco.replace(',', '.')) * item.quantity;
-                subtotal += itemTotal;
-                message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\n`;
+            // Customer Info
+            message += '👤 *DADOS DO CLIENTE:*\\n';
+            message += `Nome: ${orderData.customer.nome}\\n`;
+            message += `Telefone: ${orderData.customer.telefone}\\n`;
+            
+            message += '\\n----------------------------------\\n';
+            
+            message += '🛍️ *PRODUTOS:*\\n';
+            orderData.items.forEach(item => {
+                const itemTotal = formatPrice(item.product.preco) * item.quantity;
+                message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\\n`;
             });
 
-            message += '\n----------------------------------\n';
+            message += '\\n----------------------------------\\n';
             
-            message += '📍 *ENDEREÇO DE ENTREGA:*\n';
-            message += `Rua: ${rua}, Nº: ${numero}\n`;
-            message += `Bairro: ${bairroText}\n`;
-            if (cep) message += `CEP: ${cep}\n`;
+            message += '📍 *ENDEREÇO DE ENTREGA:*\\n';
+            message += `Rua: ${orderData.address.rua}, Nº: ${orderData.address.numero}\\n`;
+            
+            const bairroNames = {
+                'sambaqui': 'Sambaqui',
+                'barra-do-sambaqui': 'Barra do Sambaqui',
+                'santo-antonio': 'Santo Antônio de Lisboa',
+                'outro': 'Outro Bairro'
+            };
+            
+            message += `Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro}\\n`;
+            if (orderData.address.cep) message += `CEP: ${orderData.address.cep}\\n`;
 
-            message += '\n----------------------------------\n';
+            message += '\\n----------------------------------\\n';
 
-            message += '💰 *RESUMO FINANCEIRO:*\n';
-            message += `Subtotal dos Produtos: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+            message += '💰 *RESUMO FINANCEIRO:*\\n';
+            message += `Subtotal dos Produtos: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')}\\n`;
             
             let deliveryFeeText = '';
-            if (bairroEl.value === 'outro') {
+            if (orderData.address.bairro === 'outro') {
                 deliveryFeeText = 'A combinar (R$ 5/km)';
             } else {
-                deliveryFeeText = `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
+                deliveryFeeText = `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
             }
-            message += `Taxa de Entrega: ${deliveryFeeText}\n`;
+            message += `Taxa de Entrega: ${deliveryFeeText}\\n`;
             
-            const total = subtotal + deliveryFee;
-            message += `*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
+            message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')}*\\n`;
 
-            if (bairroEl.value === 'outro') {
+            if (orderData.address.bairro === 'outro') {
                 message += `_(Total acima não inclui a taxa de entrega, que será combinada.)_`;
             }
 
@@ -873,6 +1076,66 @@
             const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
         }
+
+        async function finishOrder() {
+            if (!customerData.nome || !customerData.telefone || !addressData.bairro || !addressData.rua || !addressData.numero) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            isProcessing = true;
+            renderCartContent();
+
+            const subtotal = cart.reduce((sum, item) => {
+                const price = formatPrice(item.product.preco);
+                return sum + (price * item.quantity);
+            }, 0);
+
+            const orderData = {
+                customer: customerData,
+                items: cart,
+                address: addressData,
+                subtotal,
+                deliveryFee,
+                total: subtotal + deliveryFee,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await sendToGoogleSheets(orderData);
+                sendToWhatsApp(orderData);
+                
+                // Clear cart and close sidebar
+                cart = [];
+                updateCartBadge();
+                closeCart();
+                
+                showToast('Pedido enviado! Você será redirecionado para o WhatsApp.', 'success');
+            } catch (error) {
+                console.error('Erro no checkout:', error);
+                showToast('Erro ao processar pedido. Tente novamente.', 'error');
+            } finally {
+                isProcessing = false;
+            }
+        }
+
+        // Utility functions
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    showToast(`Não foi possível ativar a tela cheia: ${err.message}`, 'error');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCategories();
+            renderProducts();
+            updateCartBadge();
+        });
     </script>
 </body>
 </html>
