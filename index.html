@@ -1248,105 +1248,107 @@
 
         // Checkout functions
     async function sendToGoogleSheets(orderData) {
-    try {
-        // Simplifica os dados dos itens para evitar objetos complexos
-        const itemsSimplified = orderData.items.map(item => ({
-            quantity: item.quantity,
-            produto: item.product.produto,
-            volume: item.product.volume,
-            preco: item.product.preco
-        }));
-
-        const sheetsData = {
-            customerName: orderData.customer.nome,
-            customerPhone: orderData.customer.telefone,
-            address: `${orderData.address.rua}, ${orderData.address.numero}`,
-            neighborhood: orderData.address.bairro,
-            cep: orderData.address.cep || '',
-            items: itemsSimplified, // Itens simplificados
-            subtotal: orderData.subtotal,
-            deliveryFee: orderData.deliveryFee,
-            total: orderData.total
-        };
-
-        console.log('Enviando para Google Sheets:', sheetsData);
-
-        // Usa XMLHttpRequest que é mais compatível com CORS
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', SHEETS_WEBHOOK_URL, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
+    return new Promise((resolve) => {
+        try {
+            console.log('📤 Iniciando envio para Google Sheets...');
             
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    console.log('Sucesso:', xhr.responseText);
-                    showToast('Pedido registrado no sistema!', 'success');
-                    resolve(true);
-                } else {
-                    console.error('Erro HTTP:', xhr.status, xhr.responseText);
-                    showToast('Pedido enviado (erro no sistema)', 'info');
-                    resolve(true); // Continua mesmo com erro
-                }
+            // Simplifica os dados para evitar problemas de serialização
+            const sheetsData = {
+                customerName: orderData.customer.nome || '',
+                customerPhone: orderData.customer.telefone || '',
+                address: `${orderData.address.rua || ''}, ${orderData.address.numero || ''}`,
+                neighborhood: orderData.address.bairro || '',
+                cep: orderData.address.cep || '',
+                items: orderData.items.map(item => ({
+                    quantity: item.quantity,
+                    produto: item.product.produto,
+                    volume: item.product.volume,
+                    preco: item.product.preco
+                })),
+                subtotal: orderData.subtotal,
+                deliveryFee: orderData.deliveryFee,
+                total: orderData.total
             };
-            
-            xhr.onerror = function() {
-                console.error('Erro de rede');
+
+            console.log('📊 Dados a serem enviados:', sheetsData);
+
+            // Usa fetch com tratamento de erro melhorado
+            fetch(SHEETS_WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(sheetsData)
+            })
+            .then(() => {
+                console.log('✅ Requisição enviada (no-cors)');
+                showToast('Pedido registrado no sistema!', 'success');
+                resolve(true);
+            })
+            .catch(error => {
+                console.error('❌ Erro na requisição:', error);
                 showToast('Erro de rede, mas pedido será enviado via WhatsApp', 'error');
-                resolve(true); // Continua para WhatsApp
-            };
-            
-            xhr.timeout = 10000; // 10 segundos timeout
-            xhr.ontimeout = function() {
-                console.error('Timeout');
-                showToast('Timeout, mas pedido será enviado via WhatsApp', 'error');
-                resolve(true); // Continua para WhatsApp
-            };
-            
-            xhr.send(JSON.stringify(sheetsData));
-        });
+                resolve(true); // Continua mesmo com erro
+            });
 
-    } catch (error) {
-        console.error('Erro ao enviar para Google Sheets:', error);
-        showToast('Erro no sistema, mas pedido será enviado via WhatsApp', 'error');
-        return true; // Sempre continua para WhatsApp
-    }
+        } catch (error) {
+            console.error('💥 Erro inesperado:', error);
+            showToast('Erro inesperado, mas pedido será enviado via WhatsApp', 'error');
+            resolve(true);
+        }
+    });
 }
         async function finishOrder() {
-            isProcessing = true;
-            renderCartContent();
+    console.log('🚀 Iniciando finalização do pedido...');
+    isProcessing = true;
+    renderCartContent();
 
-            const subtotal = cart.reduce((sum, item) => {
-                const price = formatPrice(item.product.preco);
-                return sum + (price * item.quantity);
-            }, 0);
+    try {
+        const subtotal = cart.reduce((sum, item) => {
+            const price = formatPrice(item.product.preco);
+            return sum + (price * item.quantity);
+        }, 0);
 
-            const orderData = {
-                customer: customerData,
-                items: cart,
-                address: addressData,
-                subtotal,
-                deliveryFee,
-                total: subtotal + deliveryFee,
-                timestamp: new Date().toISOString()
-            };
+        const orderData = {
+            customer: customerData,
+            items: cart,
+            address: addressData,
+            subtotal,
+            deliveryFee,
+            total: subtotal + deliveryFee,
+            timestamp: new Date().toISOString()
+        };
 
-            try {
-                await sendToGoogleSheets(orderData);
-                sendToWhatsApp(orderData);
-                
-                // Clear cart and close sidebar
-                cart = [];
-                updateCartBadge();
-                closeCart();
-                
-                showToast('Pedido enviado! Você será redirecionado para o WhatsApp.', 'success');
-            } catch (error) {
-                console.error('Erro no checkout:', error);
-                showToast('Erro ao processar pedido. Tente novamente.', 'error');
-            } finally {
-                isProcessing = false;
-            }
+        console.log('📦 Dados do pedido:', orderData);
+
+        // Tenta enviar para o Google Sheets
+        const sheetsSuccess = await sendToGoogleSheets(orderData);
+        
+        if (sheetsSuccess) {
+            console.log('✅ Google Sheets - OK');
+        } else {
+            console.log('⚠️ Google Sheets - Falha, mas continuando...');
         }
+
+        // Envia para WhatsApp (sempre executa)
+        sendToWhatsApp(orderData);
+        
+        // Limpa carrinho e fecha sidebar
+        cart = [];
+        updateCartBadge();
+        closeCart();
+        
+        showToast('Pedido enviado! Você será redirecionado para o WhatsApp.', 'success');
+        
+    } catch (error) {
+        console.error('💥 Erro crítico no finishOrder:', error);
+        showToast('Erro ao processar pedido. Tente novamente.', 'error');
+    } finally {
+        isProcessing = false;
+        renderCartContent();
+    }
+}
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
@@ -1357,6 +1359,7 @@
     </script>
 </body>
 </html>
+
 
 
 
