@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -61,6 +60,116 @@
         .cart-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilos para o sidebar (carrinho) */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.show {
+            right: 0;
+        }
+
+        /* Estilos para toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Estilos para mensagens de erro */
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .input-error {
+            border-color: #ef4444 !important;
+        }
+
+        /* Spinner para loading */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -139,6 +248,8 @@
     <!-- Toast Container -->
     <div id="toastContainer"></div>
 
+    <script>
+    
     <script>
         // Products data
         const products = [
@@ -394,7 +505,7 @@
             {"tipo": "Tabaco", "produto": "Zoomo Seda", "volume": "un.", "preco": "2,99"},
             {"tipo": "Cigarro", "produto": "Classic", "volume": "un.", "preco": "6,50"}
         ];
-        const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
+       const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
         
         // URL do Google Sheets corrigida
         const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw0RUgDrVXv8_Qh2m3X-vd7FtzoY0sJ7B5_82_NjSeoocDiBCl7DfQJpS-ehzCSnleeVQ/exec";
@@ -806,7 +917,7 @@
                                 <span class="font-medium">Informações para Contato</span>
                             </div>
                             <p class="text-sm text-cyan-600">
-                                Precisamos desses dados para confirmar seu pedido e entrega.
+                                Precisamos desses dados para confirmar seu pedido và entrega.
                             </p>
                         </div>
 
@@ -1263,17 +1374,6 @@
             }
         }
 
-        // Utility functions
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    showToast(`Não foi possível ativar a tela cheia: ${err.message}`, 'error');
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
-
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();
@@ -1283,8 +1383,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
