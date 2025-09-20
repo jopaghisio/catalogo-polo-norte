@@ -1299,7 +1299,7 @@
         }
     });
 }
-        async function finishOrder() {
+    async function finishOrder() {
     console.log('🚀 Iniciando finalização do pedido...');
     isProcessing = true;
     renderCartContent();
@@ -1331,8 +1331,16 @@
             console.log('⚠️ Google Sheets - Falha, mas continuando...');
         }
 
-        // Envia para WhatsApp (sempre executa)
-        sendToWhatsApp(orderData);
+        // Envia para WhatsApp - com verificação de segurança
+        if (typeof sendToWhatsApp === 'function') {
+            sendToWhatsApp(orderData);
+        } else {
+            console.error('❌ Função sendToWhatsApp não encontrada');
+            // Cria URL alternativa do WhatsApp
+            const phone = '5548999299710';
+            const text = `Novo pedido de ${orderData.customer.nome} - Total: R$ ${orderData.total.toFixed(2)}`;
+            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`, '_blank');
+        }
         
         // Limpa carrinho e fecha sidebar
         cart = [];
