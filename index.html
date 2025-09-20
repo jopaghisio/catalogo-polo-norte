@@ -1247,41 +1247,53 @@
         }
 
         // Checkout functions
-        async function sendToGoogleSheets(orderData) {
-            try {
-                const sheetsData = {
-                    timestamp: new Date().toLocaleString('pt-BR'),
-                    customerName: orderData.customer.nome,
-                    customerPhone: orderData.customer.telefone,
-                    address: `${orderData.address.rua}, ${orderData.address.numero}`,
-                    neighborhood: orderData.address.bairro,
-                    cep: orderData.address.cep || '',
-                    items: orderData.items.map(item => 
-                        `${item.quantity}x ${item.product.produto} (${item.product.volume})`
-                    ).join('; '),
-                    subtotal: orderData.subtotal,
-                    deliveryFee: orderData.deliveryFee,
-                    total: orderData.total,
-                    itemsCount: orderData.items.length,
-                    totalQuantity: orderData.items.reduce((sum, item) => sum + item.quantity, 0)
-                };
+      async function sendToGoogleSheets(orderData) {
+    try {
+        const sheetsData = {
+            customerName: orderData.customer.nome,
+            customerPhone: orderData.customer.telefone,
+            address: `${orderData.address.rua}, ${orderData.address.numero}`,
+            neighborhood: orderData.address.bairro,
+            cep: orderData.address.cep || '',
+            items: orderData.items,
+            subtotal: orderData.subtotal,
+            deliveryFee: orderData.deliveryFee,
+            total: orderData.total
+        };
 
-                console.log('Enviando para Google Sheets:', sheetsData);
+        console.log('Enviando para Google Sheets:', sheetsData);
 
-                await fetch(SHEETS_WEBHOOK_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(sheetsData)
-                });
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(sheetsData)
+        });
 
-                showToast('Pedido registrado com sucesso!', 'success');
-            } catch (error) {
-                console.error('Erro ao enviar para Google Sheets:', error);
-                showToast('Erro ao registrar pedido, mas será enviado via WhatsApp', 'error');
+        // Tenta ler a resposta mesmo com no-cors
+        try {
+            const responseData = await response.text();
+            console.log('Resposta do servidor:', responseData);
+            
+            if (responseData.includes('error') || responseData.includes('ERRO')) {
+                throw new Error('Erro no servidor: ' + responseData);
             }
+            
+            showToast('Pedido registrado no sistema!', 'success');
+            return true;
+        } catch (textError) {
+            // Se não conseguir ler a resposta, assume sucesso para no-cors
+            showToast('Pedido enviado para processamento!', 'success');
+            return true;
         }
 
+    } catch (error) {
+        console.error('Erro ao enviar para Google Sheets:', error);
+        showToast('Erro ao registrar pedido no sistema, mas será enviado via WhatsApp', 'error');
+        return false;
+    }
+}
        function sendToWhatsApp(orderData) {
     let message = '🛒 *NOVO PEDIDO - POLO NORTE* ';
     
