@@ -175,6 +175,23 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        /* Validação de campos */
+        .input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -185,14 +202,14 @@
         <div class="container mx-auto px-4 py-12 relative">
             <div class="text-center space-y-6">
                 <!-- Logo com imagem -->
-<div class="flex items-center justify-center">
-    <div class="relative">
-        <div class="h-32 md:h-40 w-40 md:w-48 bg-white rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
-            <img src="Captura de tela 2025-07-25 121004.png" alt="Logo Polo Norte" class="object-contain w-full h-full" />
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-transparent to-cyan-400/20 blur-xl"></div>
-    </div>
-</div>
+                <div class="flex items-center justify-center">
+                    <div class="relative">
+                        <div class="h-32 md:h-40 w-40 md:w-48 bg-white rounded-xl flex items-center justify-center shadow-2xl overflow-hidden">
+                            <img src="Captura de tela 2025-07-25 121004.png" alt="Logo Polo Norte" class="object-contain w-full h-full" />
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-transparent to-cyan-400/20 blur-xl"></div>
+                    </div>
+                </div>
                 <div class="space-y-2">
                     <p class="text-xl md:text-2xl text-cyan-300 font-medium tracking-wide">
                         Seus produtos favoritos com entrega rápida!
@@ -517,6 +534,7 @@
         ];
         const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
         
+        // URL do Google Sheets corrigida
         const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw0RUgDrVXv8_Qh2m3X-vd7FtzoY0sJ7B5_82_NjSeoocDiBCl7DfQJpS-ehzCSnleeVQ/exec";
 
         // App state
@@ -578,6 +596,41 @@
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
+            }
+        }
+
+        // Funções de validação
+        function validateName(name) {
+            return name.trim().length >= 3;
+        }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+            return phoneRegex.test(phone.replace(/\s/g, ''));
+        }
+
+        function validateAddress(address) {
+            return address.trim().length >= 5;
+        }
+
+        function validateNumber(number) {
+            return number.trim().length >= 1;
+        }
+
+        function validateNeighborhood(neighborhood) {
+            return neighborhood !== '';
+        }
+
+        function showValidationError(fieldId, messageId, show) {
+            const field = document.getElementById(fieldId);
+            const message = document.getElementById(messageId);
+            
+            if (show) {
+                field.classList.add('input-error');
+                message.classList.add('show');
+            } else {
+                field.classList.remove('input-error');
+                message.classList.remove('show');
             }
         }
 
@@ -905,6 +958,9 @@
                                 oninput="updateCustomerData('nome', this.value)"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
                             />
+                            <div id="customerNameError" class="error-message">
+                                Por favor, informe seu nome completo (mínimo 3 caracteres)
+                            </div>
                         </div>
 
                         <div class="space-y-2">
@@ -918,6 +974,9 @@
                                 maxlength="15"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
                             />
+                            <div id="customerPhoneError" class="error-message">
+                                Por favor, informe um número de telefone válido
+                            </div>
                             <p class="text-xs text-gray-500">
                                 Usaremos para confirmar o pedido e avisar sobre a entrega
                             </p>
@@ -936,10 +995,11 @@
                             Voltar
                         </button>
                         <button 
-    onclick="goToAddressStep()"
-    class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3">
-    Continuar para Endereço
-</button>
+                            onclick="validateCustomerStep()"
+                            class="flex-1 bg-black hover:bg-gray-800 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3"
+                        >
+                            Continuar para Endereço
+                        </button>
                     </div>
                 </div>
             `;
@@ -997,6 +1057,9 @@
                                 <option value="santo-antonio" ${addressData.bairro === 'santo-antonio' ? 'selected' : ''}>Santo Antônio de Lisboa</option>
                                 <option value="outro" ${addressData.bairro === 'outro' ? 'selected' : ''}>Outro Bairro</option>
                             </select>
+                            <div id="neighborhoodError" class="error-message">
+                                Por favor, selecione o bairro de entrega
+                            </div>
                         </div>
 
                         <div class="space-y-2">
@@ -1009,6 +1072,9 @@
                                 oninput="updateAddressData('rua', this.value)"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
                             />
+                            <div id="streetError" class="error-message">
+                                Por favor, informe o nome da rua
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -1033,6 +1099,9 @@
                                     oninput="updateAddressData('numero', this.value)"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 outline-none transition-all"
                                 />
+                                <div id="numberError" class="error-message">
+                                    Por favor, informe o número
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1068,17 +1137,18 @@
                             <i class="fas fa-arrow-left mr-2"></i>
                             Voltar
                         </button>
-                      <button 
-    onclick="finishOrder()"
-    class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3"
-    id="finishBtn">
-    ${isProcessing ? `
-        <div class="flex items-center justify-center gap-2">
-            <div class="spinner"></div>
-            Processando...
-        </div>
-    ` : 'Finalizar Pedido'}
-</button>
+                        <button 
+                            onclick="validateAddressStep()"
+                            class="flex-1 bg-cyan-500 hover:bg-cyan-600 text-white rounded-xl font-semibold transition-all hover:shadow-lg py-3"
+                            id="finishBtn"
+                        >
+                            ${isProcessing ? `
+                                <div class="flex items-center justify-center gap-2">
+                                    <div class="spinner"></div>
+                                    Processando...
+                                </div>
+                            ` : 'Finalizar Pedido'}
+                        </button>
                     </div>
                 </div>
             `;
@@ -1090,13 +1160,39 @@
             renderCartContent();
         }
 
-        function goToAddressStep() {
-            if (!customerData.nome || !customerData.telefone) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                return;
+        function validateCustomerStep() {
+            const nameValid = validateName(customerData.nome);
+            const phoneValid = validatePhone(customerData.telefone);
+            
+            showValidationError('customerName', 'customerNameError', !nameValid);
+            showValidationError('customerPhone', 'customerPhoneError', !phoneValid);
+            
+            if (nameValid && phoneValid) {
+                goToAddressStep();
+            } else {
+                showToast('Por favor, preencha todos os campos corretamente', 'error');
             }
+        }
+
+        function goToAddressStep() {
             currentStep = 'address';
             renderCartContent();
+        }
+
+        function validateAddressStep() {
+            const neighborhoodValid = validateNeighborhood(addressData.bairro);
+            const streetValid = validateAddress(addressData.rua);
+            const numberValid = validateNumber(addressData.numero);
+            
+            showValidationError('neighborhood', 'neighborhoodError', !neighborhoodValid);
+            showValidationError('street', 'streetError', !streetValid);
+            showValidationError('number', 'numberError', !numberValid);
+            
+            if (neighborhoodValid && streetValid && numberValid) {
+                finishOrder();
+            } else {
+                showToast('Por favor, preencha todos os campos obrigatórios', 'error');
+            }
         }
 
         function backToCart() {
@@ -1112,6 +1208,11 @@
         // Data updates
         function updateCustomerData(field, value) {
             customerData[field] = value;
+            // Validação em tempo real
+            if (field === 'nome') {
+                const isValid = validateName(value);
+                showValidationError('customerName', 'customerNameError', !isValid && value.length > 0);
+            }
         }
 
         function updateCustomerPhone(value) {
@@ -1128,14 +1229,31 @@
             }
             customerData.telefone = formatted;
             document.getElementById('customerPhone').value = formatted;
+            
+            // Validação em tempo real
+            const isValid = validatePhone(formatted);
+            showValidationError('customerPhone', 'customerPhoneError', !isValid && formatted.length > 0);
         }
 
         function updateAddressData(field, value) {
             addressData[field] = value;
+            
+            // Validação em tempo real
+            if (field === 'rua') {
+                const isValid = validateAddress(value);
+                showValidationError('street', 'streetError', !isValid && value.length > 0);
+            } else if (field === 'numero') {
+                const isValid = validateNumber(value);
+                showValidationError('number', 'numberError', !isValid && value.length > 0);
+            }
         }
 
         function updateNeighborhood(bairro) {
             addressData.bairro = bairro;
+            
+            // Validação em tempo real
+            const isValid = validateNeighborhood(bairro);
+            showValidationError('neighborhood', 'neighborhoodError', !isValid && bairro.length > 0);
             
             switch(bairro) {
                 case 'sambaqui':
@@ -1247,11 +1365,6 @@
         }
 
         async function finishOrder() {
-            if (!customerData.nome || !customerData.telefone || !addressData.bairro || !addressData.rua || !addressData.numero) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                return;
-            }
-
             isProcessing = true;
             renderCartContent();
 
@@ -1308,9 +1421,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
