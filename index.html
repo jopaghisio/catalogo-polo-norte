@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -1285,21 +1286,17 @@
             let message = '🛒 *NOVO PEDIDO - POLO NORTE*\\n\\n';
             
             // Customer Info
-            message += '👤 *DADOS DO CLIENTE:*\\n';
-            message += `Nome: ${orderData.customer.nome}\\n`;
-            message += `Telefone: ${orderData.customer.telefone}\\n`;
+            message += '👤 *DADOS DO CLIENTE:;
+            message += `Nome: ${orderData.customer.nome};
+            message += `Telefone: ${orderData.customer.telefone};
             
-            message += '\\n----------------------------------\\n';
-            
-            message += '🛍️ *PRODUTOS:*\\n';
+            message += '🛍️ *PRODUTOS:;
             orderData.items.forEach(item => {
                 const itemTotal = formatPrice(item.product.preco) * item.quantity;
                 message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\\n`;
             });
-
-            message += '\\n----------------------------------\\n';
             
-            message += '📍 *ENDEREÇO DE ENTREGA:*\\n';
+            message += '📍 *ENDEREÇO DE ENTREGA:;
             message += `Rua: ${orderData.address.rua}, Nº: ${orderData.address.numero}\\n`;
             
             const bairroNames = {
@@ -1312,9 +1309,7 @@
             message += `Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro}\\n`;
             if (orderData.address.cep) message += `CEP: ${orderData.address.cep}\\n`;
 
-            message += '\\n----------------------------------\\n';
-
-            message += '💰 *RESUMO FINANCEIRO:*\\n';
+            message += '💰 *RESUMO FINANCEIRO:;
             message += `Subtotal dos Produtos: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')}\\n`;
             
             let deliveryFeeText = '';
@@ -1323,9 +1318,9 @@
             } else {
                 deliveryFeeText = `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
             }
-            message += `Taxa de Entrega: ${deliveryFeeText}\\n`;
+            message += `Taxa de Entrega: ${deliveryFeeText};
             
-            message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')}*\\n`;
+            message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')};
 
             if (orderData.address.bairro === 'outro') {
                 message += `_(Total acima não inclui a taxa de entrega, que será combinada.)_`;
@@ -1382,5 +1377,6 @@
     </script>
 </body>
 </html>
+
 
 
