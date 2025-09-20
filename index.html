@@ -1282,55 +1282,54 @@
             }
         }
 
-        function sendToWhatsApp(orderData) {
-            let message = '🛒 *NOVO PEDIDO - POLO NORTE*\\n\\n';
-            
-            // Customer Info
-            message += '👤 *DADOS DO CLIENTE:;
-            message += `Nome: ${orderData.customer.nome};
-            message += `Telefone: ${orderData.customer.telefone};
-            
-            message += '🛍️ *PRODUTOS:;
-            orderData.items.forEach(item => {
-                const itemTotal = formatPrice(item.product.preco) * item.quantity;
-                message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\\n`;
-            });
-            
-            message += '📍 *ENDEREÇO DE ENTREGA:;
-            message += `Rua: ${orderData.address.rua}, Nº: ${orderData.address.numero}\\n`;
-            
-            const bairroNames = {
-                'sambaqui': 'Sambaqui',
-                'barra-do-sambaqui': 'Barra do Sambaqui',
-                'santo-antonio': 'Santo Antônio de Lisboa',
-                'outro': 'Outro Bairro'
-            };
-            
-            message += `Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro}\\n`;
-            if (orderData.address.cep) message += `CEP: ${orderData.address.cep}\\n`;
+       function sendToWhatsApp(orderData) {
+    let message = '🛒 *NOVO PEDIDO - POLO NORTE* ';
+    
+    // Customer Info
+    message += '👤 *DADOS DO CLIENTE:* ';
+    message += `Nome: ${orderData.customer.nome} `;
+    message += `Telefone: ${orderData.customer.telefone} `;
+    
+    message += '🛍️ *PRODUTOS:* ';
+    orderData.items.forEach(item => {
+        const itemTotal = formatPrice(item.product.preco) * item.quantity;
+        message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')} `;
+    });
+    
+    message += '📍 *ENDEREÇO DE ENTREGA:* ';
+    message += `Rua: ${orderData.address.rua}, Nº: ${orderData.address.numero} `;
+    
+    const bairroNames = {
+        'sambaqui': 'Sambaqui',
+        'barra-do-sambaqui': 'Barra do Sambaqui',
+        'santo-antonio': 'Santo Antônio de Lisboa',
+        'outro': 'Outro Bairro'
+    };
+    
+    message += `Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro} `;
+    if (orderData.address.cep) message += `CEP: ${orderData.address.cep} `;
 
-            message += '💰 *RESUMO FINANCEIRO:;
-            message += `Subtotal dos Produtos: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')}\\n`;
-            
-            let deliveryFeeText = '';
-            if (orderData.address.bairro === 'outro') {
-                deliveryFeeText = 'A combinar (R$ 5/km)';
-            } else {
-                deliveryFeeText = `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
-            }
-            message += `Taxa de Entrega: ${deliveryFeeText};
-            
-            message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')};
+    message += '💰 *RESUMO FINANCEIRO:* ';
+    message += `Subtotal dos Produtos: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')} `;
+    
+    let deliveryFeeText = '';
+    if (orderData.address.bairro === 'outro') {
+        deliveryFeeText = 'A combinar (R$ 5/km)';
+    } else {
+        deliveryFeeText = `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
+    }
+    message += `Taxa de Entrega: ${deliveryFeeText} `;
+    
+    message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')}* `;
 
-            if (orderData.address.bairro === 'outro') {
-                message += `_(Total acima não inclui a taxa de entrega, que será combinada.)_`;
-            }
+    if (orderData.address.bairro === 'outro') {
+        message += `_(Total acima não inclui a taxa de entrega, que será combinada.)_`;
+    }
 
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-        }
-
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+}
         async function finishOrder() {
             isProcessing = true;
             renderCartContent();
@@ -1377,6 +1376,7 @@
     </script>
 </body>
 </html>
+
 
 
 
