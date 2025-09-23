@@ -507,7 +507,7 @@
        const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
         
         // URL do Google Sheets corrigida
-        const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw0RUgDrVXv8_Qh2m3X-vd7FtzoY0sJ7B5_82_NjSeoocDiBCl7DfQJpS-ehzCSnleeVQ/exec";
+        const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxCLyw3FcImb9EIR3doE94EWqHiAVNrNprJR_Rczm1pILS6KniIL1LJ_W0AWwD4e8YktA/exec";
 
         // App state
         let cart = [];
@@ -1246,50 +1246,66 @@
         }
 
         // Checkout functions
-    async function sendToGoogleSheets(orderData) {
+   async function sendToGoogleSheets(orderData) {
     return new Promise((resolve) => {
         try {
             console.log('📤 Iniciando envio para Google Sheets...');
             
-            // Simplifica os dados para evitar problemas de serialização
+            // Prepara os dados no formato que o AppScript espera
             const sheetsData = {
                 customerName: orderData.customer.nome || '',
                 customerPhone: orderData.customer.telefone || '',
-                address: `${orderData.address.rua || ''}, ${orderData.address.numero || ''}`,
+                address: orderData.address.rua || '',
+                number: orderData.address.numero || '', // ← IMPORTANTE: campo separado
                 neighborhood: orderData.address.bairro || '',
                 cep: orderData.address.cep || '',
                 items: orderData.items.map(item => ({
-                    quantity: item.quantity,
-                    produto: item.product.produto,
-                    volume: item.product.volume,
-                    preco: item.product.preco
+                    quantity: item.quantity || 1,
+                    produto: item.product.produto || '',
+                    volume: item.product.volume || '',
+                    preco: item.product.preco || '0'
                 })),
-                subtotal: orderData.subtotal,
-                deliveryFee: orderData.deliveryFee,
-                total: orderData.total
+                subtotal: orderData.subtotal || 0,
+                deliveryFee: orderData.deliveryFee || 0,
+                total: orderData.total || 0
             };
 
             console.log('📊 Dados a serem enviados:', sheetsData);
 
-            // Usa fetch com tratamento de erro melhorado
-            fetch(SHEETS_WEBHOOK_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(sheetsData)
-            })
-            .then(() => {
-                console.log('✅ Requisição enviada (no-cors)');
-                showToast('Pedido registrado no sistema!', 'success');
-                resolve(true);
-            })
-            .catch(error => {
-                console.error('❌ Erro na requisição:', error);
+            // Usa XMLHttpRequest para melhor controle (REMOVE mode: 'no-cors')
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', SHEETS_WEBHOOK_URL);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    console.log('📨 Resposta do servidor:', xhr.status, xhr.responseText);
+                    if (xhr.status === 200) {
+                        console.log('✅ Dados enviados com sucesso para o Google Sheets');
+                        showToast('Pedido registrado no sistema!', 'success');
+                        resolve(true);
+                    } else {
+                        console.error('❌ Erro no envio:', xhr.status);
+                        showToast('Erro ao registrar no sistema, mas pedido será enviado via WhatsApp', 'error');
+                        resolve(true);
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
+                console.error('❌ Erro de rede');
                 showToast('Erro de rede, mas pedido será enviado via WhatsApp', 'error');
-                resolve(true); // Continua mesmo com erro
-            });
+                resolve(true);
+            };
+            
+            xhr.timeout = 10000;
+            xhr.ontimeout = function() {
+                console.error('⏰ Timeout na requisição');
+                showToast('Tempo limite excedido, mas pedido será enviado via WhatsApp', 'error');
+                resolve(true);
+            };
+            
+            xhr.send(JSON.stringify(sheetsData));
 
         } catch (error) {
             console.error('💥 Erro inesperado:', error);
@@ -1400,6 +1416,7 @@
     </script>
 </body>
 </html>
+
 
 
 
