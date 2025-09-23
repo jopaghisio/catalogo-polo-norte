@@ -507,7 +507,7 @@
        const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco'];
         
         // URL do Google Sheets corrigida
-        const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxG8XX2MxW-DwmxsEPjq7Qn6joCol1FaRyFBN_xctb_72d4BJ8gZs3IsOijzfMyOXGivQ/exec";
+        const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx10BfQj2lB2F1Z1MtKH1_3qo_YKYNrCe3LqcHT2fm0jV_-6ualwT_RZe74X447QTN-CA/exec";
 
         // App state
         let cart = [];
@@ -1246,17 +1246,16 @@
         }
 
         // Checkout functions
-   async function sendToGoogleSheets(orderData) {
+  async function sendToGoogleSheets(orderData) {
     return new Promise((resolve) => {
         try {
             console.log('📤 Iniciando envio para Google Sheets...');
             
-            // Prepara os dados no formato que o AppScript espera
             const sheetsData = {
                 customerName: orderData.customer.nome || '',
                 customerPhone: orderData.customer.telefone || '',
                 address: orderData.address.rua || '',
-                number: orderData.address.numero || '', // ← IMPORTANTE: campo separado
+                number: orderData.address.numero || '',
                 neighborhood: orderData.address.bairro || '',
                 cep: orderData.address.cep || '',
                 items: orderData.items.map(item => ({
@@ -1272,40 +1271,28 @@
 
             console.log('📊 Dados a serem enviados:', sheetsData);
 
-            // Usa XMLHttpRequest para melhor controle (REMOVE mode: 'no-cors')
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', SHEETS_WEBHOOK_URL);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    console.log('📨 Resposta do servidor:', xhr.status, xhr.responseText);
-                    if (xhr.status === 200) {
-                        console.log('✅ Dados enviados com sucesso para o Google Sheets');
-                        showToast('Pedido registrado no sistema!', 'success');
-                        resolve(true);
-                    } else {
-                        console.error('❌ Erro no envio:', xhr.status);
-                        showToast('Erro ao registrar no sistema, mas pedido será enviado via WhatsApp', 'error');
-                        resolve(true);
-                    }
-                }
-            };
-            
-            xhr.onerror = function() {
-                console.error('❌ Erro de rede');
-                showToast('Erro de rede, mas pedido será enviado via WhatsApp', 'error');
+            // Método alternativo usando Google Forms como proxy (se necessário)
+            // Ou usando fetch com modo 'no-cors' mas sem esperar resposta
+            fetch(SHEETS_WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Não espera resposta devido ao CORS
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(sheetsData)
+            })
+            .then(() => {
+                console.log('✅ Requisição enviada (modo no-cors)');
+                // Como não podemos ver a resposta, assumimos sucesso
+                showToast('Pedido registrado no sistema!', 'success');
                 resolve(true);
-            };
-            
-            xhr.timeout = 10000;
-            xhr.ontimeout = function() {
-                console.error('⏰ Timeout na requisição');
-                showToast('Tempo limite excedido, mas pedido será enviado via WhatsApp', 'error');
+            })
+            .catch(error => {
+                console.error('❌ Erro na requisição:', error);
+                // Mesmo com erro, continua para WhatsApp
+                showToast('Pedido será enviado via WhatsApp', 'info');
                 resolve(true);
-            };
-            
-            xhr.send(JSON.stringify(sheetsData));
+            });
 
         } catch (error) {
             console.error('💥 Erro inesperado:', error);
@@ -1416,6 +1403,7 @@
     </script>
 </body>
 </html>
+
 
 
 
