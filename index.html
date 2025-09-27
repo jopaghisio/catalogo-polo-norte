@@ -1306,42 +1306,75 @@
         }
     });  
 }
-        function sendToWhatsApp(orderData) {
-    let message = '🛒 *NOVO PEDIDO - POLO NORTE* ';
-    message += '👤 *DADOS DO CLIENTE:* ';
-    message += `Nome: ${orderData.customer.nome} `;
-    message += `Telefone: ${orderData.customer.telefone} `;
-    message += '🛍️ *PRODUTOS:* ';
-    orderData.items.forEach(item => {
-        const itemTotal = formatPrice(item.product.preco) * item.quantity;
-        message += `- ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')} `;
-    });
-    message += '📍 *ENDEREÇO DE ENTREGA:* ';
-    message += `Rua: ${orderData.address.rua}, Nº: ${orderData.address.numero} `;
-    const bairroNames = {
-        'sambaqui': 'Sambaqui',
-        'barra-do-sambaqui': 'Barra do Sambaqui', 
-        'santo-antonio': 'Santo Antônio de Lisboa',
-        'outro': 'Outro Bairro'
-    };
-    message += `Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro} `;
-    if (orderData.address.cep) message += `CEP: ${orderData.address.cep} `;
-    message += '💰 *RESUMO FINANCEIRO:* ';
-    message += `Subtotal dos Produtos: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')} `;
-    let deliveryFeeText = orderData.address.bairro === 'outro' ? 'A combinar (R$ 5/km)' : `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
-    message += `Taxa de Entrega: ${deliveryFeeText} `;
-    message += `*TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')}* `;
-    if (orderData.address.bairro === 'outro') message += `_(Total acima não inclui a taxa de entrega, que será combinada.)_`;
-    message += '⏰ *Horário do Pedido:* ' + new Date().toLocaleString('pt-BR') + ' ';
-    message += '✅ *PEDIDO REGISTRADO NO SISTEMA*';
+function sendToWhatsApp(orderData) {
+    try {
+        let message = '🛒 *NOVO PEDIDO - POLO NORTE BEBIDAS* 🛒\n\n';
+        
+        // DADOS DO CLIENTE
+        message += '👤 *DADOS DO CLIENTE:*\n';
+        message += `• Nome: ${orderData.customer.nome}\n`;
+        message += `• Telefone: ${orderData.customer.telefone}\n\n`;
+        
+        // PRODUTOS
+        message += '🛍️ *ITENS DO PEDIDO:*\n';
+        orderData.items.forEach((item, index) => {
+            const itemTotal = formatPrice(item.product.preco) * item.quantity;
+            message += `${index + 1}. ${item.quantity}x ${item.product.produto} (${item.product.volume}) - R$ ${itemTotal.toFixed(2).replace('.', ',')}\n`;
+        });
+        
+        message += '\n📍 *ENDEREÇO DE ENTREGA:*\n';
+        message += `• Rua: ${orderData.address.rua}\n`;
+        message += `• Número: ${orderData.address.numero}\n`;
+        
+        const bairroNames = {
+            'sambaqui': 'Sambaqui',
+            'barra-do-sambaqui': 'Barra do Sambaqui', 
+            'santo-antonio': 'Santo Antônio de Lisboa',
+            'outro': 'Outro Bairro'
+        };
+        message += `• Bairro: ${bairroNames[orderData.address.bairro] || orderData.address.bairro}\n`;
+        if (orderData.address.cep) message += `• CEP: ${orderData.address.cep}\n`;
+        
+        // RESUMO FINANCEIRO
+        message += '\n💰 *RESUMO DO PEDIDO:*\n';
+        message += `• Subtotal: R$ ${orderData.subtotal.toFixed(2).replace('.', ',')}\n`;
+        
+        let deliveryFeeText = orderData.address.bairro === 'outro' ? 'A combinar (R$ 5/km)' : `R$ ${orderData.deliveryFee.toFixed(2).replace('.', ',')}`;
+        message += `• Taxa de Entrega: ${deliveryFeeText}\n`;
+        message += `• *TOTAL: R$ ${orderData.total.toFixed(2).replace('.', ',')}*\n`;
+        
+        if (orderData.address.bairro === 'outro') {
+            message += '\n_*Observação:* Taxa de entrega será combinada separadamente (R$ 5/km)_\n';
+        }
+        
+        message += `\n⏰ *Pedido realizado em:* ${new Date().toLocaleString('pt-BR')}\n`;
+        message += `🌐 *Via:* Catálogo Online\n`;
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank');
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=5548999299710&text=${encodedMessage}`;
+        
+        // MÉTODO OTIMIZADO PARA MOBILE
+        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            // Dispositivo móvel - usa location.href
+            window.location.href = whatsappUrl;
+        } else {
+            // Desktop - abre em nova aba
+            window.open(whatsappUrl, '_blank');
+        }
+        
+    } catch (error) {
+        console.error('❌ Erro ao enviar para WhatsApp:', error);
+        
+        // Fallback para mobile
+        const phone = '5548999299710';
+        const simpleMessage = `Novo pedido de ${orderData.customer.nome} - Total: R$ ${orderData.total.toFixed(2)}`;
+        const fallbackUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(simpleMessage)}`;
+        
+        window.location.href = fallbackUrl;
+    }
 }
-
-    async function finishOrder() {
-    console.log('🚀 Iniciando finalização do pedido...');
+ async function finishOrder() {
+    console.log('🚀 Finalizando pedido...');
     isProcessing = true;
     renderCartContent();
 
@@ -1358,47 +1391,65 @@
             subtotal,
             deliveryFee,
             total: subtotal + deliveryFee,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toLocaleString('pt-BR')
         };
 
         console.log('📦 Dados do pedido:', orderData);
 
-        // Tenta enviar para o Google Sheets
-        const sheetsSuccess = await sendToGoogleSheets(orderData);
-        
-        if (sheetsSuccess) {
-            console.log('✅ Google Sheets - OK');
-        } else {
-            console.log('⚠️ Google Sheets - Falha, mas continuando...');
-        }
+        // 1️⃣ PRIMEIRO: Tenta enviar para Sheets (não bloqueia)
+        await sendToGoogleSheets(orderData).catch(error => {
+            console.log('⚠️ Sheets falhou, mas continuando...', error);
+        });
 
-        // Envia para WhatsApp - com verificação de segurança
-        if (typeof sendToWhatsApp === 'function') {
-            sendToWhatsApp(orderData);
-        } else {
-            console.error('❌ Função sendToWhatsApp não encontrada');
-            // Cria URL alternativa do WhatsApp
-            const phone = '5548999299710';
-            const text = `Novo pedido de ${orderData.customer.nome} - Total: R$ ${orderData.total.toFixed(2)}`;
-            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`, '_blank');
-        }
-        
-        // Limpa carrinho e fecha sidebar
-        cart = [];
-        updateCartBadge();
+        // 2️⃣ Fecha o carrinho rapidamente antes de abrir WhatsApp
         closeCart();
         
-        showToast('Pedido enviado! Você será redirecionado para o WhatsApp.', 'success');
+        // 3️⃣ Pequeno delay para garantir que o carrinho fechou
+        setTimeout(() => {
+            // 4️⃣ SEGUNDO: Envia para WhatsApp
+            sendToWhatsApp(orderData);
+            
+            // 5️⃣ Feedback para o usuário
+            showToast('Redirecionando para WhatsApp...', 'success');
+        }, 500);
+        
+        // 6️⃣ Limpa carrinho
+        cart = [];
+        updateCartBadge();
         
     } catch (error) {
-        console.error('💥 Erro crítico no finishOrder:', error);
-        showToast('Erro ao processar pedido. Tente novamente.', 'error');
+        console.error('💥 Erro crítico:', error);
+        showToast('Erro ao processar, tentando abrir WhatsApp...', 'error');
+        
+        // Tenta enviar para WhatsApp mesmo com erro
+        try {
+            const subtotal = cart.reduce((sum, item) => {
+                const price = formatPrice(item.product.preco);
+                return sum + (price * item.quantity);
+            }, 0);
+            
+            const orderData = {
+                customer: customerData,
+                items: cart,
+                address: addressData,
+                subtotal,
+                deliveryFee,
+                total: subtotal + deliveryFee
+            };
+            
+            closeCart();
+            setTimeout(() => sendToWhatsApp(orderData), 300);
+        } catch (whatsappError) {
+            console.error('❌ WhatsApp também falhou:', whatsappError);
+            // Última tentativa - URL simples
+            const phone = '5548999299710';
+            const text = `Novo pedido de ${customerData.nome}`;
+            window.location.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`;
+        }
     } finally {
         isProcessing = false;
-        renderCartContent();
     }
 }
-
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             renderCategories();
@@ -1408,6 +1459,7 @@
     </script>
 </body>
 </html>
+
 
 
 
