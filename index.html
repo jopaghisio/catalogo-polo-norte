@@ -566,7 +566,7 @@
             {"tipo": "Refrigerante", "produto": "Agua Tonica Fys Limao Siciliano", "volume": "1L", "preco": "3,99"},
             {"tipo": "Bebida", "produto": "Gatorade Zero/ Laranja Lima", "volume": "500ml", "preco": "4,99"}
         ];
-const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco', 'Acessório', 'Doce', 'Energético', 'Licor', 'Bebida', 'Cigarro', 'Churrasco', 'Combo', 'Geral'];        
+const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'Vinho', 'Refrigerante', 'Snack', 'Tabaco', 'Acessório', 'Doce', 'Energético', 'Licor', 'Bebida', 'Cigarro', 'Churrasco', 'Combo'];        
         // URL do Google Sheets corrigida
         const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx10BfQj2lB2F1Z1MtKH1_3qo_YKYNrCe3LqcHT2fm0jV_-6ualwT_RZe74X447QTN-CA/exec";
 
@@ -600,8 +600,7 @@ const categories = ['Todos', 'Cerveja', 'Whisky', 'Vodka', 'Gin', 'Cachaça', 'V
         'Bebida': '🧃',
         'Cigarro': '🚬',
         'Churrasco': '🔥',
-        'Combo': '📦',
-        'Geral': '📦'
+        'Combo': '📦
     };
     return emojis[category] || '📦';
 }
@@ -1525,6 +1524,7 @@ function sendToWhatsApp(orderData) {
     </script>
 </body>
 </html>
+
 
 
 
